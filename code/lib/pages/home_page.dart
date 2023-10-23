@@ -3,42 +3,74 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
-  
-  @override
-  _HomePageState createState() => _HomePageState();
-}
+  const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
   final TextEditingController _ingredientController = TextEditingController();
   String? _recipe;
-
+  bool isLoading = false;
 
   Future<void> _generateRecipe() async {
-    // Here, you'd make the call to OpenAI's API
+    setState(() {
+      isLoading = true;
+      _recipe = null; // Removing the previous response
+    });
+
     final response = await http.post(
-      Uri.parse('https://api.openai.com/v1/engines/text-davinci-003/completions'),
+      Uri.parse(
+          'https://api.openai.com/v1/engines/text-davinci-003/completions'),
       headers: {
-        'Authorization': 'Bearer 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',
+        'Authorization':
+            'Bearer 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',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
         'prompt': 'Generate a recipe using ${_ingredientController.text}',
-        'max_tokens': 200,  // Limit to your requirement
+        'max_tokens': 1000, // Limiting to our requirement
       }),
     );
-
 
     final data = jsonDecode(response.body);
     setState(() {
       _recipe = data['choices'][0]['text'].trim();
+      isLoading = false;
     });
   }
 
+  Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Do you want to log out?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +85,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.grey[850],
         actions: [
           IconButton(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+            onPressed: () {
+              _showLogoutConfirmationDialog(context);
             },
-            icon: Icon(Icons.exit_to_app, color: Colors.white),
+            icon: const Icon(Icons.exit_to_app, color: Colors.white),
           ),
         ],
       ),
@@ -65,8 +97,10 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(user!.email.toString(), style: const TextStyle(color: Colors.white)),
-              accountEmail: const Text("Member since: Jan 2023", style: TextStyle(color: Colors.white)),
+              accountName: Text(user!.email.toString(),
+                  style: const TextStyle(color: Colors.white)),
+              accountEmail: const Text("Member since: Jan 2023",
+                  style: TextStyle(color: Colors.white)),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.blue,
                 child: Text("User"),
@@ -77,17 +111,15 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.notifications, color: Colors.white),
-              title: const Text('Notifications', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                // Navigation logic if needed
-              },
+              title: const Text('Notifications',
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.settings, color: Colors.white),
-              title: const Text('Settings', style: TextStyle(color: Colors.white)),
-              onTap: () {
-                // Navigation logic if needed
-              },
+              title:
+                  const Text('Settings', style: TextStyle(color: Colors.white)),
+              onTap: () {},
             ),
           ],
         ),
@@ -99,20 +131,62 @@ class _HomePageState extends State<HomePage> {
           children: [
             TextField(
               controller: _ingredientController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: "Enter ingredients",
                 filled: true,
                 fillColor: Colors.white,
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
               ),
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _generateRecipe,
-              child: const Text("Generate Recipe"),
+            Center(
+              child: isLoading
+                  ? Container(
+                      padding: const EdgeInsets.only(top: 177.0),
+                      child: const CircularProgressIndicator(),
+                    )
+                  : ElevatedButton(
+                      onPressed: _generateRecipe,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                      ),
+                      child: const Text("Generate Recipe"),
+                    ),
             ),
-            const SizedBox(height: 16.0),
-            if (_recipe != null) Text(_recipe!, style: const TextStyle(color: Colors.white)),
+            if (_recipe != null)
+              Column(
+                children: [
+                  const SizedBox(height: 32.0),
+                  SizedBox(
+                    height: 400,
+                    child: Card(
+                      color: Colors.grey[800],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          _recipe!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: ElevatedButton(
+                      onPressed: _generateRecipe,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                      ),
+                      child: const Text("Regenerate Response"),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

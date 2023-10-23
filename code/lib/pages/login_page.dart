@@ -22,9 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = true;
       });
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text,
-        password: _password.text
-      );
+          email: _email.text, password: _password.text);
       setState(() {
         isLoading = false;
       });
@@ -32,23 +30,22 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = false;
       });
-      print("FirebaseAuthException caught: ${e.code}");
       if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Invalid login credentials. Please try again.")
-          )
-        );
+        if (context.mounted) {
+          return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Invalid login credentials. Please try again.")));
+        }
       }
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Log in to App Name", style: TextStyle(color: Colors.white)),
+        title: const Text("Log in to Spare Spoon",
+            style: TextStyle(color: Colors.white)),
         elevation: 0,
       ),
       backgroundColor: Colors.black,
@@ -106,7 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                     labelStyle: const TextStyle(color: Colors.white),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
+                        _isPasswordHidden
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.white,
                       ),
                       onPressed: () {
@@ -123,7 +122,8 @@ class _LoginPageState extends State<LoginPage> {
                   height: 45,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black, backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -145,7 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                   child: OutlinedButton(
                     onPressed: widget.onPressed,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white, side: const BorderSide(color: Colors.white),
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white),
                     ),
                     child: const Text('Sign Up'),
                   ),

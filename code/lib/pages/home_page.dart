@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import './side_bar.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -92,38 +93,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(user!.email.toString(),
-                  style: const TextStyle(color: Colors.white)),
-              accountEmail: const Text("Member since: Jan 2023",
-                  style: TextStyle(color: Colors.white)),
-              currentAccountPicture: const CircleAvatar(
-                backgroundColor: Colors.blue,
-                child: Text("User"),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey[850],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications, color: Colors.white),
-              title: const Text('Notifications',
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Colors.white),
-              title:
-                  const Text('Settings', style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: Sidebar(user: user),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

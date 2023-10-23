@@ -19,7 +19,7 @@ class AuthPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (snapshot.hasData && snapshot.data != null) {
-            return HomePage();
+            return const HomePage();
           }
           // Handle the unauthenticated user or null data
           return const LoginAndSignUp();

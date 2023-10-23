@@ -17,15 +17,12 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _password = TextEditingController();
 
   createUserWithEmailAndPassword() async {
-
     try {
       setState(() {
         isLoading = true;
       });
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email.text,
-        password: _password.text
-      );
+          email: _email.text, password: _password.text);
       setState(() {
         isLoading = false;
       });
@@ -34,32 +31,30 @@ class _SignUpState extends State<SignUp> {
         isLoading = false;
       });
       if (e.code == 'weak-password') {
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("The password provided is too weak.")
-          )
-        );
+        if (context.mounted) {
+          return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("The password provided is too weak.")));
+        }
       } else if (e.code == 'email-already-in-use') {
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("The account already exists for that email.")
-          )
-        );
+        if (context.mounted) {
+          return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("The account already exists for that email.")));
+        }
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      print(e);
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Sign Up to App Name", style: TextStyle(color: Colors.white)),
+        title: const Text("Sign Up to Spare Spoon",
+            style: TextStyle(color: Colors.white)),
         elevation: 0,
       ),
       backgroundColor: Colors.black,
@@ -117,7 +112,9 @@ class _SignUpState extends State<SignUp> {
                     labelStyle: const TextStyle(color: Colors.white),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
+                        _isPasswordHidden
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.white,
                       ),
                       onPressed: () {
@@ -134,7 +131,8 @@ class _SignUpState extends State<SignUp> {
                   height: 45,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black, backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -156,7 +154,8 @@ class _SignUpState extends State<SignUp> {
                   child: OutlinedButton(
                     onPressed: widget.onPressed,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white, side: const BorderSide(color: Colors.white),
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white),
                     ),
                     child: const Text('Login'),
                   ),

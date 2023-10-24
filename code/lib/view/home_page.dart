@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import './side_bar.dart';
+import '../utils/side_bar.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {

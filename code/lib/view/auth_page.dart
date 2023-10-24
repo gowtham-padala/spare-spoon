@@ -1,7 +1,7 @@
-import 'package:code/pages/login_or_signup.dart';
+import 'package:code/view/login_or_signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import './home_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -11,7 +11,8 @@ class AuthPage extends StatelessWidget {
     return Scaffold(
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) { // Corrected the parameter name
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          // Corrected the parameter name
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           }

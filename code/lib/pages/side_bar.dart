@@ -38,8 +38,7 @@ class Sidebar extends StatelessWidget {
                   title: const Text('Change Profile Information',
                       style: TextStyle(color: Colors.teal)),
                   onTap: () {
-                    // Navigate to the profile information screen
-                    // You can use Navigator to push a new screen or use a route.
+                    // Navigating to the profile information screen
                   },
                 ),
                 ListTile(
@@ -47,8 +46,7 @@ class Sidebar extends StatelessWidget {
                   title: const Text('Favorite Recipes',
                       style: TextStyle(color: Colors.teal)),
                   onTap: () {
-                    // Navigate to the favorite recipes screen
-                    // You can use Navigator to push a new screen or use a route.
+                    // Navigating to the favorite recipes screen
                   },
                 ),
                 ListTile(
@@ -56,20 +54,18 @@ class Sidebar extends StatelessWidget {
                   title: const Text('Settings',
                       style: TextStyle(color: Colors.teal)),
                   onTap: () {
-                    // Navigate to the settings screen
-                    // You can use Navigator to push a new screen or use a route.
+                    // Navigating to the settings screen
                   },
                 ),
               ],
             ),
           ),
-          // Close button at the very bottom
           ListTile(
             leading: const Icon(Icons.close, color: Colors.red),
             title: const Text('Close Sidebar',
                 style: TextStyle(color: Colors.red)),
             onTap: () {
-              Navigator.pop(context); // Close the sidebar
+              Navigator.pop(context);
             },
           ),
         ],

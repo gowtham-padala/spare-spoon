@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../user_service.dart';
-import '../user_model.dart';
+import '../controller/user_service.dart';
+import '../model/user_model.dart';
 
 class SignUp extends StatefulWidget {
   final void Function()? onPressed;

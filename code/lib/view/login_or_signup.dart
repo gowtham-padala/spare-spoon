@@ -1,7 +1,7 @@
-import 'package:code/pages/sign_up_page.dart';
+import 'package:code/view/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
-import 'login_page.dart';
+import './login_page.dart';
 
 class LoginAndSignUp extends StatefulWidget {
   const LoginAndSignUp({super.key});
@@ -11,7 +11,6 @@ class LoginAndSignUp extends StatefulWidget {
 }
 
 class _LoginAndSignUpState extends State<LoginAndSignUp> {
-
   bool islogin = true;
 
   void togglePage() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../view/recipes_list_page.dart';
 
 class Sidebar extends StatelessWidget {
   final User? user;
@@ -35,18 +36,23 @@ class Sidebar extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.person, color: Colors.blue),
-                  title: const Text('Change Profile Information',
+                  title: const Text('Profile Management',
                       style: TextStyle(color: Colors.teal)),
                   onTap: () {
-                    // Navigating to the profile information screen
+                    // Navigating to the profile management screen
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.favorite, color: Colors.blue),
-                  title: const Text('Favorite Recipes',
+                  leading: const Icon(Icons.restaurant, color: Colors.blue),
+                  title: const Text('Recipes',
                       style: TextStyle(color: Colors.teal)),
                   onTap: () {
-                    // Navigating to the favorite recipes screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RecipesListPage(),
+                      ),
+                    );
                   },
                 ),
                 ListTile(

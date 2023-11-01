@@ -8,7 +8,8 @@ class RecipeModelHiveAdapter extends TypeAdapter<RecipeModel> {
 
   @override
   RecipeModel read(BinaryReader reader) {
-    return RecipeModel(reader.read());
+    final recipe = reader.read() as String;
+    return RecipeModel(name: '', recipe: recipe);
   }
 
   @override

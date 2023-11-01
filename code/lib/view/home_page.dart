@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:code/model/save_recipe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -6,6 +8,7 @@ import '../model/recipe_model.dart';
 import '../utils/side_bar.dart';
 import 'dart:convert';
 import 'saved_recipes.dart';
+import '../model/recipe_name_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,11 +17,60 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+class SavedRecipeItem extends StatelessWidget {
+  final RecipeModel recipe;
+
+  SavedRecipeItem(this.recipe);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.grey[800],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Text(
+                  recipe.name,
+                  style: const TextStyle(color: Colors.blue),
+                ),
+                Text(
+                  recipe.recipe,
+                  style: const TextStyle(color: Colors.blue),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Implement your functionality here (e.g., delete or edit the recipe).
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                  ),
+                  child: const Text("Edit Recipe"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
   final TextEditingController _ingredientController = TextEditingController();
   String? _recipe;
   bool isLoading = false;
+  List<RecipeModel> savedRecipes = [];
+  RecipeModel? recipeModel;
+  var recipes;
+  bool showSavedRecipes = false;
+
 
   Future<void> _generateRecipe() async {
     setState(() {
@@ -76,6 +128,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +154,7 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: Sidebar(user: user),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -114,32 +170,78 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 14.0),
-            Center(
-              child: isLoading
-                  ? Container(
-                      padding: const EdgeInsets.only(top: 177.0),
-                      child: const CircularProgressIndicator(),
-                    )
-                  : ElevatedButton(
-                      onPressed: _generateRecipe,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
+            Expanded(
+              child: Center(
+                child: isLoading
+                    ? Container(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: const CircularProgressIndicator(),
+                      )
+                    : ElevatedButton(
+                        onPressed: _generateRecipe,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                        ),
+                        child: const Text("Generate Recipe"),
                       ),
-                      child: const Text("Generate Recipe"),
-                    ),
+              ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SavedRecipesPage()),
-                );
+              onPressed: () async {
+                // Call the getRecipes function and wait for the results.
+                recipes = await getRecipes();
+
+                // Set the flag to show saved recipes.
+                if (mounted) {
+                  setState(() {
+                    showSavedRecipes = true;
+                  });
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
               ),
               child: const Text("Show Saved Recipes"),
             ),
+
+          if (showSavedRecipes)
+            Column(
+              children: [
+                const SizedBox(height: 20.0),
+
+                SizedBox(
+                  height: 400,
+                  child: Card(
+                    color: Colors.grey[800],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: ListView(
+                        children: [
+                          for (var recipe in recipes)
+                            SavedRecipeItem(recipe),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showSavedRecipes = false; // Assuming showSavedRecipes is a boolean state variable
+                    });
+                  },
+                  child: Text("Close"),
+                ),
+
+            ],
+        ),
+
+
+
+
             if (_recipe != null)
               Column(
                 children: [
@@ -160,12 +262,16 @@ class _HomePageState extends State<HomePage> {
                               style: const TextStyle(color: Colors.blue),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                // Add the code to save the recipe here
+                              onPressed: () async {
                                 if (_recipe != null) {
-                                  final box = Hive.box<RecipeModel>('recipes');
-                                  final recipeModel = RecipeModel(_recipe!);
-                                  box.add(recipeModel);
+                                  final recipeName = await getRecipeNameDialog(context);
+                                  if(recipeName != null){
+                                    recipeModel = RecipeModel(name: recipeName, recipe: _recipe!);
+                                    saveRecipe(recipeModel!);
+                                  }
+                                  setState(() {
+                                    savedRecipes.add(recipeModel!);
+                                  });
                                 }
                               },
                               style: ElevatedButton.styleFrom(

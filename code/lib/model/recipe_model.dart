@@ -4,8 +4,9 @@ part 'recipe_model.g.dart'; // This will be generated
 
 @HiveType(typeId: 0)
 class RecipeModel {
-  @HiveField(0)
+  final String name;
   final String recipe;
+  @HiveField(0)
 
-  RecipeModel(this.recipe);
+  RecipeModel({required this.recipe, required this.name});
 }

@@ -41,6 +41,8 @@ dependencies:
   firebase_ui_auth: ^1.9.1
   google_fonts: ^6.1.0
   provider: ^5.0.0
+  quickalert: ^1.0.2
+  google_sign_in: ^6.1.5
 
 dev_dependencies:
   flutter_test:

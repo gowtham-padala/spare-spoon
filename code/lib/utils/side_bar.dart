@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../view/recipes_list_page.dart';
+import 'package:flutter/material.dart';
+
+import '../view/recipe/recipes_list_page.dart';
 
 class Sidebar extends StatelessWidget {
   final User? user;
@@ -23,11 +24,15 @@ class Sidebar extends StatelessWidget {
                   accountEmail: const Text("Member since: Jan 2023",
                       style: TextStyle(color: Colors.white)),
                   currentAccountPicture: const CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Text("User"),
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      color: Colors.black54,
+                      Icons.person,
+                      size: 60,
+                    ),
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[850],
+                    color: Colors.deepPurple.shade300,
                     image: const DecorationImage(
                       image: AssetImage("assets/sidebar_food_image.jpg"),
                       fit: BoxFit.cover,
@@ -35,17 +40,19 @@ class Sidebar extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.person, color: Colors.blue),
-                  title: const Text('Profile Management',
-                      style: TextStyle(color: Colors.teal)),
+                  leading:
+                      Icon(Icons.person, color: Colors.deepPurple.shade300),
+                  title: Text('Profile Management',
+                      style: TextStyle(color: Colors.deepPurple.shade300)),
                   onTap: () {
                     // Navigating to the profile management screen
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.restaurant, color: Colors.blue),
-                  title: const Text('Recipes',
-                      style: TextStyle(color: Colors.teal)),
+                  leading:
+                      Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
+                  title: Text('Recipes',
+                      style: TextStyle(color: Colors.deepPurple.shade300)),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -56,9 +63,10 @@ class Sidebar extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings, color: Colors.blue),
-                  title: const Text('Settings',
-                      style: TextStyle(color: Colors.teal)),
+                  leading:
+                      Icon(Icons.settings, color: Colors.deepPurple.shade300),
+                  title: Text('Settings',
+                      style: TextStyle(color: Colors.deepPurple.shade300)),
                   onTap: () {
                     // Navigating to the settings screen
                   },
@@ -67,9 +75,9 @@ class Sidebar extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.close, color: Colors.red),
-            title: const Text('Close Sidebar',
-                style: TextStyle(color: Colors.red)),
+            leading: Icon(Icons.close, color: Colors.redAccent.shade400),
+            title: Text('Close Sidebar',
+                style: TextStyle(color: Colors.redAccent.shade400)),
             onTap: () {
               Navigator.pop(context);
             },

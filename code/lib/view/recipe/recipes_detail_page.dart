@@ -11,9 +11,7 @@ class RecipesDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        backgroundColor: Colors.grey[850],
         title: const Center(
           child: Text(
             'Recipe Details',
@@ -32,6 +30,7 @@ class RecipesDetailsPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Card(
+                  color: Colors.deepPurple.shade300,
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -41,20 +40,18 @@ class RecipesDetailsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        Text(name,
+                            style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                         const SizedBox(height: 20),
                         const Text(
                           'How Do I Make It?',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontStyle: FontStyle.italic,
-                          ),
+                              fontSize: 20,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.white),
                         ),
                       ],
                     ),
@@ -66,6 +63,7 @@ class RecipesDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 height: 300,
                 child: Card(
+                  color: Colors.deepPurple.shade300,
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -75,8 +73,11 @@ class RecipesDetailsPage extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         description,
+                        textAlign: TextAlign.justify,
                         style: const TextStyle(
                           fontSize: 16,
+                          color: Colors.white,
+
                         ),
                       ),
                     ),

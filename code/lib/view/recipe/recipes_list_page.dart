@@ -8,14 +8,12 @@ class RecipesListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[800],
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
           'Recipes',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.grey[850],
       ),
       body: ListView(
         children: <Widget>[
@@ -57,7 +55,7 @@ class _RecipeCardState extends State<RecipeCard> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      color: Colors.grey[700],
+      color: Colors.deepPurple.shade300,
       child: ListTile(
         title: Text(
           widget.name,
@@ -72,7 +70,7 @@ class _RecipeCardState extends State<RecipeCard> {
             GestureDetector(
               child: Icon(
                 isStarClicked ? Icons.star : Icons.star_border,
-                color: isStarClicked ? Colors.teal : null,
+                color: isStarClicked ? Colors.white : null,
               ),
               onTap: () {
                 setState(() {
@@ -82,7 +80,7 @@ class _RecipeCardState extends State<RecipeCard> {
             ),
             const SizedBox(width: 12),
             GestureDetector(
-              child: const Icon(Icons.delete, color: Colors.red),
+              child: const Icon(Icons.delete, color: Colors.white),
               onTap: () {
                 _showDeleteConfirmationDialog(context);
               },

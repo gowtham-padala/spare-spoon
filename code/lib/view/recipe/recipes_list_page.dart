@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './recipes_detail_page.dart';
+
+import 'recipes_detail_page.dart';
 
 class RecipesListPage extends StatelessWidget {
   const RecipesListPage({Key? key}) : super(key: key);

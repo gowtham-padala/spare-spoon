@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:code/model/save_recipe.dart';
 import 'package:code/view/recipe/recipes_list_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import '../controller/recipe_service.dart';
 import '../model/recipe_model.dart';
 import '../utils/side_bar.dart';
 import 'dart:convert';
-import 'saved_recipes.dart';
-import '../model/recipe_name_dialog.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,7 +49,7 @@ class SavedRecipeItem extends StatelessWidget {
                       ),
                 Text(
                   recipe.recipe,
-                  style: const TextStyle(color: Colors.blue),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -148,7 +146,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
@@ -205,8 +203,8 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: 10),
                       ElevatedButton(
                       onPressed: () async {
-
-                        recipes = await getRecipes();
+                        final UserId = user?.uid;
+                        recipes = await getRecipes(UserId!);
 
                         // Setting the flag to show saved recipes.
                         if (mounted) {
@@ -224,8 +222,8 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () async {
-
-                        recipes = await getRecipes();
+                        final UserId = user?.uid;
+                        recipes = await getRecipes(UserId!);
 
                         // Setting the flag to show saved recipes.
                         if (mounted) {
@@ -244,25 +242,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            /*
-            ElevatedButton(
-              onPressed: () async {
-
-                recipes = await getRecipes();
-
-                // Setting the flag to show saved recipes.
-                if (mounted) {
-                  setState(() {
-                    showFavouriteRecipes = true;
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple[300],
-              ),
-              child: const Text("Show Favourite Recipes"),
-            ),
-             */
             if (showFavouriteRecipes)
               Column(
                 children: [
@@ -279,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 400,
                     child: Card(
-                      color: Colors.grey[800],
+                      color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -343,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 400,
                     child: Card(
-                      color: Colors.grey[800],
+                      color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -353,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               _recipe!,
-                              style: const TextStyle(color: Colors.blue),
+                              style: const TextStyle(color: Colors.black),
                             ),
                             ElevatedButton(
                               onPressed: () async {
@@ -365,8 +344,9 @@ class _HomePageState extends State<HomePage> {
                                     recipeName = result.recipeName;
                                     final isFavourite = result.isFavorite;
                                     if(recipeName != null){
+                                      final UserId = user?.uid;
                                       recipeModel = RecipeModel(name: recipeName, recipe: _recipe!, favourite: isFavourite);
-                                      saveRecipe(recipeModel!);
+                                      saveRecipe(UserId!, recipeModel!);
                                     }
                                     setState(() {
                                       savedRecipes.add(recipeModel!);
@@ -392,7 +372,7 @@ class _HomePageState extends State<HomePage> {
                     child: ElevatedButton(
                       onPressed: _generateRecipe,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
+                        backgroundColor: Colors.deepPurple[300],
                       ),
                       child: const Text("Regenerate Response"),
                     ),

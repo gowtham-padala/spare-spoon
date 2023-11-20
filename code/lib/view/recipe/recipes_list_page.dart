@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import '../../controller/recipe_service.dart';
 import '../../model/recipe_model.dart';
 import '../../utils/side_bar.dart';
+import '../home_page.dart';
 import 'recipes_detail_page.dart';
-import 'package:code/model/save_recipe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class RecipesPage extends StatefulWidget {
+  const RecipesPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageStateMenu();
+  State<RecipesPage> createState() => _HomePageStateMenu();
 }
 
 class SavedRecipeItem extends StatelessWidget {
@@ -22,7 +22,7 @@ class SavedRecipeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[800],
+      color: Colors.grey[300],
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -67,7 +67,7 @@ class SavedRecipeItem extends StatelessWidget {
   }
 }
 
-class _HomePageStateMenu extends State<HomePage> {
+class _HomePageStateMenu extends State<RecipesPage> {
   final user = FirebaseAuth.instance.currentUser;
   final TextEditingController _ingredientController = TextEditingController();
   String? _recipe;
@@ -78,12 +78,28 @@ class _HomePageStateMenu extends State<HomePage> {
   bool showSavedRecipes = false;
   bool showFavouriteRecipes = false;
   late var recipeName;
+  void initState() {
+    super.initState();
+    // Call the method to show saved recipes initially
+    _showSavedRecipes();
+  }
 
+  // Method to fetch and show saved recipes
+  Future<void> _showSavedRecipes() async {
+    final UserId = user?.uid;
+    recipes = await getRecipes(UserId!);
 
+    if (mounted) {
+      setState(() {
+        showSavedRecipes = true;
+        showFavouriteRecipes = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
@@ -94,6 +110,7 @@ class _HomePageStateMenu extends State<HomePage> {
       ),
 
       drawer: Sidebar(user: user),
+
       body: ListView(
         padding: const EdgeInsets.all(1.0),
         children: [
@@ -104,13 +121,26 @@ class _HomePageStateMenu extends State<HomePage> {
                  child: const CircularProgressIndicator(),
                 )
                 : Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text("Filters", style:TextStyle(color:Colors.white)),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Use Navigator to pop the current route and return to the previous page.
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple[300],
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.20, 50),
+                      ),
+                      child: const Text("Back"),
+                    ),
+                    Spacer(),
+                    Text("Filters", style:TextStyle(color:Colors.deepPurple[300])),
                 SizedBox(width:10),
                 ElevatedButton(
                   onPressed: () async {
-                    recipes = await getRecipes();
+                    final UserId = user?.uid;
+                    recipes = await getRecipes(UserId!);
                     // Setting the flag to show saved recipes.
                     if (mounted) {
                       setState(() {
@@ -128,8 +158,8 @@ class _HomePageStateMenu extends State<HomePage> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () async {
-
-                    recipes = await getRecipes();
+                    final UserId = user?.uid;
+                    recipes = await getRecipes(UserId!);
 
                     // Setting the flag to show saved recipes.
                     if (mounted) {
@@ -164,7 +194,7 @@ class _HomePageStateMenu extends State<HomePage> {
                   SizedBox(
                     height: 400,
                     child: Card(
-                      color: Colors.grey[800],
+                      color: Colors.grey[300],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -199,7 +229,7 @@ class _HomePageStateMenu extends State<HomePage> {
                   SizedBox(
                     height: 400,
                     child: Card(
-                      color: Colors.grey[800],
+                      color: Colors.grey[300],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
@@ -224,7 +254,7 @@ class _HomePageStateMenu extends State<HomePage> {
                   SizedBox(
                     height: 400,
                     child: Card(
-                      color: Colors.grey[800],
+                      color: Colors.grey[300],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),

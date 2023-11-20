@@ -1,8 +1,11 @@
 // Import necessary packages and files
+import 'package:code/utils/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../Components/alert.dart';
 import '../../controller/user_service.dart';
 import '../../model/user_model.dart';
-import '../../Components/alert.dart';
 
 // Widget for managing user profile information.
 class ProfileManagementPage extends StatefulWidget {
@@ -120,20 +123,19 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Profile Management',
-          style: TextStyle(color: Colors.white),
+    // Access the ThemeProvider using Provider
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Theme(
+        data: ThemeData(
+          brightness:
+              themeProvider.darkTheme ? Brightness.dark : Brightness.light,
+          // Add other theme properties as needed
         ),
-        backgroundColor: Colors.deepPurple[300],
-      ),
-      body: SingleChildScrollView(
-        child: _buildProfileContent(),
-      ),
-    );
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: _buildProfileContent(),
+          ),
+        ));
   }
 
   // Widget for building the profile content form.
@@ -203,10 +205,10 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
         // Label for the input field.
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Colors.black,
+            color: Colors.deepPurple.shade300,
           ),
         ),
         const SizedBox(height: 5),

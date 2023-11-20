@@ -1,25 +1,38 @@
 import 'dart:convert';
 
+import 'package:code/Components/alert.dart';
 import 'package:code/controller/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:code/utils/theme_provider.dart';
+import 'package:code/view/profile/profile_management_page.dart';
+import 'package:code/view/profile/settings_page.dart';
+import 'package:code/view/recipe/recipe_generate_page.dart';
+import 'package:code/view/recipe/recipes_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
-import 'package:quickalert/quickalert.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/side_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  // Initializing variable for _auth services
   final AuthService _auth = AuthService();
+  // Text editing controller for the generate recipe field
   final TextEditingController _ingredientController = TextEditingController();
+  // Index of the selected page
+  int selectedPageIndex = 0;
+  // Initializing the _recipe variable for storing recipes
   String? _recipe;
+  // Variable to tell if we are in the loading state
   bool isLoading = false;
+  // Initializing alert variable to handle custom alert pop up
+  final Alert _alert = Alert();
 
   Future<void> _generateRecipe() async {
     setState(() {
@@ -48,121 +61,124 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
-    await QuickAlert.show(
-      onCancelBtnTap: () {
-        Navigator.pop(context);
-      },
-      context: context,
-      type: QuickAlertType.confirm,
-      text: 'Do you want to logout',
-      titleAlignment: TextAlign.center,
-      textAlignment: TextAlign.center,
-      confirmBtnText: 'Yes',
-      cancelBtnText: 'No',
-      confirmBtnColor: Colors.deepPurple[300]!,
-      headerBackgroundColor: Colors.white,
-      confirmBtnTextStyle: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
-      cancelBtnTextStyle: const TextStyle(
-        color: Colors.black, // Change the cancel button color here
-      ),
-      titleColor: Colors.black,
-      textColor: Colors.black,
-      onConfirmBtnTap: () async {
-        // Perform sign-out logic here
-        await FirebaseAuth.instance.signOut();
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
-    );
+  final PageController _pageController = PageController();
+
+  void updateSelectedIndex(int index) {
+    setState(() {
+      selectedPageIndex = index;
+    });
+    // Use PageController to navigate to the selected page
+    _pageController.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Initialize current loggedIN user
     final user = _auth.getCurrentUser();
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          "Home Page",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _showLogoutConfirmationDialog(context);
-            },
-            icon: const Icon(Icons.exit_to_app, color: Colors.white),
-          ),
-        ],
+
+    // Array with name for app bar header
+    final List<String> appBarName = [
+      "Home",
+      "Recipes",
+      "Profile Management",
+      "Settings"
+    ];
+    // Initializing the variable for app bar title
+    String appBarTitle = appBarName[selectedPageIndex];
+
+    // Array containing the list of pages
+    final List<Widget> pages = [
+      RecipeGeneratorPage(
+        ingredientController: _ingredientController,
+        generateRecipe: _generateRecipe,
+        isLoading: isLoading,
+        recipe: _recipe,
       ),
-      drawer: Sidebar(user: user),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _ingredientController,
-                decoration: InputDecoration(
-                  hintText: "Enter ingredients",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                ),
+      const RecipesListPage(),
+      ProfileManagementPage(userId: user?.uid ?? ""),
+      const SettingsPage(),
+    ]; // Access the ThemeProvider using Provider
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Theme(
+        data: ThemeData(
+          brightness:
+              themeProvider.darkTheme ? Brightness.dark : Brightness.light,
+          // Add other theme properties as needed
+        ),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.deepPurple.shade300,
+            centerTitle: true,
+            title: Text(
+              appBarTitle,
+              style: const TextStyle(color: Colors.white),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  _alert.showLogoutConfirmationDialog(context);
+                },
+                icon: const Icon(Icons.exit_to_app, color: Colors.white),
               ),
-              const SizedBox(height: 16.0),
-              Center(
-                child: isLoading
-                    ? Container(
-                        padding: const EdgeInsets.only(top: 177.0),
-                        child: const CircularProgressIndicator(),
-                      )
-                    : ElevatedButton(
-                        onPressed: _generateRecipe,
-                        child: const Text("Generate Recipe"),
-                      ),
-              ),
-              if (_recipe != null)
-                Column(
-                  children: [
-                    const SizedBox(height: 32.0),
-                    SizedBox(
-                      height: 400,
-                      child: Card(
-                        color: Colors.deepPurple[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            _recipe!,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: ElevatedButton(
-                        onPressed: _generateRecipe,
-                        child: const Text("Regenerate Response"),
-                      ),
-                    ),
-                  ],
-                ),
             ],
           ),
-        ),
-      ),
-    );
+          drawer: Sidebar(
+            user: user,
+            selectedIndex: selectedPageIndex,
+            updateSelectedIndex: updateSelectedIndex,
+          ),
+          body: PageView(
+            controller: _pageController,
+            children: pages,
+            onPageChanged: (index) {
+              setState(() {
+                selectedPageIndex = index;
+              });
+            },
+          ),
+          bottomNavigationBar: Container(
+            color: Colors.deepPurple.shade300,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              child: GNav(
+                gap: 8,
+                backgroundColor: Colors.deepPurple.shade300,
+                color: Colors.white54,
+                activeColor: Colors.white,
+                tabBackgroundColor: Colors.white38,
+                padding: const EdgeInsets.all(16),
+                onTabChange: (index) {
+                  setState(() {
+                    selectedPageIndex = index;
+                    // Set the appBarTitle based on the selected index
+                    appBarTitle = appBarName[index];
+                  });
+
+                  // Use PageController to navigate to the selected page
+                  _pageController.jumpToPage(index);
+                },
+                tabs: const [
+                  GButton(
+                    icon: Icons.home,
+                    text: "Home",
+                  ),
+                  GButton(
+                    icon: Icons.food_bank,
+                    text: "Recipes",
+                  ),
+                  GButton(
+                    icon: Icons.person,
+                    text: "Profile",
+                  ),
+                  GButton(
+                    icon: Icons.settings,
+                    text: "Settings",
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }

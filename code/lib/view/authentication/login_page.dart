@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 80),
                   // Logo
                   Icon(
-                    Icons.food_bank,
+                    Icons.food_bank_outlined,
                     size: 100,
                     color: Colors.deepPurple[300],
                   ),

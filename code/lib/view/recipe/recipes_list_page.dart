@@ -1,4 +1,6 @@
+import 'package:code/utils/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'recipes_detail_page.dart';
 
@@ -7,28 +9,29 @@ class RecipesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Recipes',
-          style: TextStyle(color: Colors.white),
+    // Access the ThemeProvider using Provider
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return Theme(
+        data: ThemeData(
+          brightness:
+              themeProvider.darkTheme ? Brightness.dark : Brightness.light,
+          // Add other theme properties as needed
         ),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(top: 20.0),
-            child: const RecipeCard(
-              name: 'Recipe 1',
-              description:
-                  "Ingredients: Chicken Yogurt, lemon juice, spices (cumin, coriander, turmeric, paprika, garam masala, chili powder, ginger, garlic) Onion, tomato, cream/coconut milk, oil, salt Instructions: Marinate and grill chicken. Sauté onion, spices, add tomato, and cream/coconut milk. Simmer and add grilled chicken. Garnish and serve with rice or naan. Ingredients: Chicken Yogurt, lemon juice, spices (cumin, coriander, turmeric, paprika, garam masala, chili powder, ginger, garlic) Onion, tomato, cream/coconut milk, oil, salt Instructions: Marinate and grill chicken. Sauté onion, spices, add tomato, and cream/coconut milk. Simmer and add grilled chicken. Garnish and serve with rice or naan",
-            ),
+        child: Scaffold(
+          body: ListView(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(top: 20.0),
+                child: const RecipeCard(
+                  name: 'Recipe 1',
+                  description:
+                      "Ingredients: Chicken Yogurt, lemon juice, spices (cumin, coriander, turmeric, paprika, garam masala, chili powder, ginger, garlic) Onion, tomato, cream/coconut milk, oil, salt Instructions: Marinate and grill chicken. Sauté onion, spices, add tomato, and cream/coconut milk. Simmer and add grilled chicken. Garnish and serve with rice or naan. Ingredients: Chicken Yogurt, lemon juice, spices (cumin, coriander, turmeric, paprika, garam masala, chili powder, ginger, garlic) Onion, tomato, cream/coconut milk, oil, salt Instructions: Marinate and grill chicken. Sauté onion, spices, add tomato, and cream/coconut milk. Simmer and add grilled chicken. Garnish and serve with rice or naan",
+                ),
+              ),
+              const RecipeCard(name: 'Recipe 2', description: 'Description 1'),
+            ],
           ),
-          const RecipeCard(name: 'Recipe 2', description: 'Description 1'),
-        ],
-      ),
-    );
+        ));
   }
 }
 

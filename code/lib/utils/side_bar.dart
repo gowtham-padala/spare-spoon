@@ -2,13 +2,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../view/recipe/recipes_list_page.dart';
-import '../view/profile/profile_management_page.dart';
-
 // Sidebar widget for the application
 class Sidebar extends StatelessWidget {
-  final User? user; // The authenticated user
-  const Sidebar({super.key, this.user});
+  final User? user;
+  final int selectedIndex;
+  final Function(int) updateSelectedIndex;
+
+  const Sidebar(
+      {super.key,
+      required this.user,
+      required this.selectedIndex,
+      required this.updateSelectedIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -49,43 +53,67 @@ class Sidebar extends StatelessWidget {
                 ),
                 // Menu options
                 ListTile(
-                  leading:
-                      Icon(Icons.person, color: Colors.deepPurple.shade300),
-                  title: Text('Profile Management',
-                      style: TextStyle(color: Colors.deepPurple.shade300)),
+                  leading: Icon(Icons.home, color: Colors.deepPurple.shade300),
+                  title: Text(
+                    'Home',
+                    style: TextStyle(
+                      color: selectedIndex == 0
+                          ? Colors.deepPurple.shade300
+                          : Colors.black, // Highlight if selected
+                    ),
+                  ),
                   onTap: () {
-                    // Navigating to the profile management screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileManagementPage(userId: user?.uid ?? ""),
-                      ),
-                    );
+                    updateSelectedIndex(0);
+                    Navigator.pop(context);
+                  },
+                ),
+
+                ListTile(
+                  leading:
+                      Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
+                  title: Text(
+                    'Recipes',
+                    style: TextStyle(
+                      color: selectedIndex == 1
+                          ? Colors.deepPurple.shade300
+                          : Colors.black, // Highlight if selected
+                    ),
+                  ),
+                  onTap: () {
+                    updateSelectedIndex(1);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   leading:
-                      Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
-                  title: Text('Recipes',
-                      style: TextStyle(color: Colors.deepPurple.shade300)),
+                      Icon(Icons.person, color: Colors.deepPurple.shade300),
+                  title: Text(
+                    'Profile Management',
+                    style: TextStyle(
+                      color: selectedIndex == 2
+                          ? Colors.deepPurple.shade300
+                          : Colors.black, // Highlight if selected
+                    ),
+                  ),
                   onTap: () {
-                    // Navigating to the recipes screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RecipesListPage(),
-                      ),
-                    );
+                    updateSelectedIndex(2);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   leading:
                       Icon(Icons.settings, color: Colors.deepPurple.shade300),
-                  title: Text('Settings',
-                      style: TextStyle(color: Colors.deepPurple.shade300)),
+                  title: Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: selectedIndex == 3
+                          ? Colors.deepPurple.shade300
+                          : Colors.black, // Highlight if selected
+                    ),
+                  ),
                   onTap: () {
-                    // Placeholder for navigating to the settings screen
+                    updateSelectedIndex(3);
+                    Navigator.pop(context);
                   },
                 ),
               ],

@@ -40,6 +40,22 @@ class AuthService {
     return _auth.currentUser;
   }
 
+  /// Get the current authenticated user's UID.
+  String? getCurrentUserEmail() {
+    return _auth.currentUser!.email;
+  }
+
+  /// Function to send the password reset email
+  Future<void> sendPasswordResetEmail(String? email) async {
+    await _auth.sendPasswordResetEmail(email: email!);
+  }
+
+  /// Function to delete user account
+  Future<void> deleteAccount() async {
+    User? user = _auth.currentUser;
+    user?.delete();
+  }
+
   /// Send a password reset email.
   Future<void> passwordReset(String email) async {
     await _auth.sendPasswordResetEmail(email: email);

@@ -82,7 +82,6 @@ class _HomePageState extends State<HomePage> {
   late var recipeName;
 
 
-
   Future<void> _generateRecipe() async {
     setState(() {
       isLoading = true;
@@ -201,116 +200,13 @@ class _HomePageState extends State<HomePage> {
                         child: const Text("Generate Recipe"),
                     ),
                           SizedBox(height: 10),
-                      ElevatedButton(
-                      onPressed: () async {
-                        final UserId = user?.uid;
-                        recipes = await getRecipes(UserId!);
 
-                        // Setting the flag to show saved recipes.
-                        if (mounted) {
-                          setState(() {
-                            showFavouriteRecipes = true;
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple[300],
-                          minimumSize: Size(MediaQuery.of(context).size.width * 0.95, 50),
-                      ),
-                      child: const Text("Show Favourite Recipes"),
-                    ),
-                          SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final UserId = user?.uid;
-                        recipes = await getRecipes(UserId!);
-
-                        // Setting the flag to show saved recipes.
-                        if (mounted) {
-                          setState(() {
-                            showSavedRecipes = true;
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple[300],
-                          minimumSize: Size(MediaQuery.of(context).size.width * 0.95, 50),
-                      ),
-                      child: const Text("Show Saved Recipes"),
-                    ),
                   ],
                 ),
               ),
             ),
-            if (showFavouriteRecipes)
-              Column(
-                children: [
-                  const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        showFavouriteRecipes = false;
-                        showSavedRecipes = false; // showSavedRecipes is a boolean state variable
-                      });
-                    },
-                    child: Text("Close"),
-                  ),
-                  SizedBox(
-                    height: 400,
-                    child: Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: ListView(
-                          children: [
-                            for (var recipe in recipes)
-                              if(recipe.favourite == true)
-                                //SavedRecipeItem(recipe),
-                                RecipeCard(name: recipe.name, description: recipe.recipe, favourite: recipe.favourite),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            if (showSavedRecipes)
-              Column(
-                children: [
-                  const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        showFavouriteRecipes = false;
-                        showSavedRecipes = false; // showSavedRecipes is a boolean state variable
-                      });
-                    },
-                    child: Text("Close"),
-                  ),
-                  SizedBox(
-                    height: 400,
-                    child: Card(
-                      color: Colors.grey[800],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: ListView(
-                          children: [
-                            for (var recipe in recipes)
-                              //SavedRecipeItem(recipe),
-                              RecipeCard(name: recipe.name, description: recipe.recipe, favourite: recipe.favourite),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+
+
 
 
 
@@ -351,7 +247,8 @@ class _HomePageState extends State<HomePage> {
                                     setState(() {
                                       savedRecipes.add(recipeModel!);
                                     });
-
+                                    _ingredientController.text = "";
+                                    _recipe = null;
                                   } else {
                                     print('User canceled the dialog');
                                   }

@@ -182,15 +182,7 @@ class _HomePageStateMenu extends State<RecipesPage> {
               Column(
                 children: [
                   const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        showFavouriteRecipes = false;
-                        showSavedRecipes = false; // showSavedRecipes is a boolean state variable
-                      });
-                    },
-                    child: Text("Close"),
-                  ),
+
                   SizedBox(
                     height: 400,
                     child: Card(
@@ -217,15 +209,6 @@ class _HomePageStateMenu extends State<RecipesPage> {
               Column(
                 children: [
                   const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        showFavouriteRecipes = false;
-                        showSavedRecipes = false; // showSavedRecipes is a boolean state variable
-                      });
-                    },
-                    child: Text("Close"),
-                  ),
                   SizedBox(
                     height: 400,
                     child: Card(

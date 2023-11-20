@@ -75,7 +75,7 @@ class Sidebar extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         //builder: (context) => const RecipesListPage(),
-                        builder: (context) => const HomePage(),
+                        builder: (context) => const RecipesPage(),
                       ),
                     );
                   },

@@ -14,6 +14,7 @@ class ProfileManagementPage extends StatefulWidget {
 
   @override
   State<ProfileManagementPage> createState() => _ProfileManagementScreenState();
+
 }
 
 class _ProfileManagementScreenState extends State<ProfileManagementPage> {
@@ -117,6 +118,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

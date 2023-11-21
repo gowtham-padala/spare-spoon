@@ -161,6 +161,7 @@ class _HomePageState extends State<HomePage> {
         isLoading: isLoading,
         recipe: _recipe,
       ),
+      /*
       if (_recipe != null)
       Column(
         children: [
@@ -227,6 +228,9 @@ class _HomePageState extends State<HomePage> {
 
         ],
       ),
+
+       */
+      //Here
     ];
       //const HomePageStateMenu(),
       ProfileManagementPage(userId: user?.uid ?? "");

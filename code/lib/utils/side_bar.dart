@@ -2,6 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../view/recipe/recipes_list_page.dart';
+
 // Sidebar widget for the application
 class Sidebar extends StatelessWidget {
   final User? user;
@@ -80,8 +82,14 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    updateSelectedIndex(1);
-                    Navigator.pop(context);
+                    // Navigating to the recipes screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        //builder: (context) => const RecipesListPage(),
+                        builder: (context) => const RecipesPage(),
+                      ),
+                    );
                   },
                 ),
                 ListTile(

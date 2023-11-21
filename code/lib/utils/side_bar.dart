@@ -1,7 +1,9 @@
 // Importing necessary packages and local views
+import 'package:code/view/profile/settings_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../view/profile/profile_management_page.dart';
 import '../view/recipe/recipes_list_page.dart';
 
 // Sidebar widget for the application
@@ -9,6 +11,7 @@ class Sidebar extends StatelessWidget {
   final User? user;
   final int selectedIndex;
   final Function(int) updateSelectedIndex;
+
 
   const Sidebar(
       {super.key,
@@ -104,8 +107,13 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    updateSelectedIndex(2);
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        //builder: (context) => const RecipesListPage(),
+                        builder: (context) => ProfileManagementPage(userId: user!.uid,),
+                      ),
+                    );
                   },
                 ),
                 ListTile(
@@ -120,8 +128,13 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    updateSelectedIndex(3);
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                        //builder: (context) => const RecipesListPage(),
+                        builder: (context) => SettingsPage(),
+                        )
+                    );
                   },
                 ),
               ],

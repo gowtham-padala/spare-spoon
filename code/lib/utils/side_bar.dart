@@ -1,10 +1,6 @@
 // Importing necessary packages and local views
-import 'package:code/view/profile/settings_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../view/profile/profile_management_page.dart';
-import '../view/recipe/recipes_list_page.dart';
 
 // Sidebar widget for the application
 class Sidebar extends StatelessWidget {
@@ -12,12 +8,11 @@ class Sidebar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) updateSelectedIndex;
 
-
   const Sidebar(
       {super.key,
-      required this.user,
-      required this.selectedIndex,
-      required this.updateSelectedIndex});
+        required this.user,
+        required this.selectedIndex,
+        required this.updateSelectedIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +70,7 @@ class Sidebar extends StatelessWidget {
 
                 ListTile(
                   leading:
-                      Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
+                  Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Recipes',
                     style: TextStyle(
@@ -85,19 +80,13 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    // Navigating to the recipes screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        //builder: (context) => const RecipesListPage(),
-                        builder: (context) => const RecipesPage(),
-                      ),
-                    );
+                    updateSelectedIndex(1);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   leading:
-                      Icon(Icons.person, color: Colors.deepPurple.shade300),
+                  Icon(Icons.person, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Profile Management',
                     style: TextStyle(
@@ -107,18 +96,13 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        //builder: (context) => const RecipesListPage(),
-                        builder: (context) => ProfileManagementPage(userId: user!.uid,),
-                      ),
-                    );
+                    updateSelectedIndex(2);
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
                   leading:
-                      Icon(Icons.settings, color: Colors.deepPurple.shade300),
+                  Icon(Icons.settings, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Settings',
                     style: TextStyle(
@@ -128,13 +112,8 @@ class Sidebar extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                        //builder: (context) => const RecipesListPage(),
-                        builder: (context) => SettingsPage(),
-                        )
-                    );
+                    updateSelectedIndex(3);
+                    Navigator.pop(context);
                   },
                 ),
               ],

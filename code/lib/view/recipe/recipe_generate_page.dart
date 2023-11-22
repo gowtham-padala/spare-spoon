@@ -184,28 +184,26 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                 ),
               ),
               const SizedBox(height: 14.0),
-              Expanded(
-                child: Center(
-                  child: isLoading
-                      ? Container(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: const CircularProgressIndicator(),
-                  )
-                      : Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _generateRecipe,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple[300],
-                          minimumSize: Size(MediaQuery.of(context).size.width * 0.95, 50),
-                        ),
-                        child: const Text("Generate Recipe"),
+              Center(
+                child: isLoading
+                    ? Container(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: const CircularProgressIndicator(),
+                )
+                    : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _generateRecipe,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple[300],
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.95, 50),
                       ),
-                      SizedBox(height: 10),
+                      child: const Text("Generate Recipe"),
+                    ),
+                    SizedBox(height: 10),
 
-                    ],
-                  ),
+                  ],
                 ),
               ),
 

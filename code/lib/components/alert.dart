@@ -1,10 +1,14 @@
 import 'package:code/controller/auth_service.dart';
+import 'package:code/controller/recipe_service.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
 /// A utility class for displaying custom modal dialogs using QuickAlert library.
 /// This class provides methods to show error, warning, and success modals.
 class Alert {
+  final RecipeService _recipeService = RecipeService();
+  final AuthService _authService = AuthService();
+
   /// Displays an error modal dialog with the given error message.
   void errorAlert(BuildContext context, String errMsg) {
     QuickAlert.show(
@@ -38,6 +42,74 @@ class Alert {
     );
   }
 
+  Future<RecipeDialogResult?> saveRecipeAlert(BuildContext context) async {
+    String recipeName = '';
+    bool isFavorite = false;
+
+    return showDialog<RecipeDialogResult>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.shade300,
+            ),
+            child: const Text(
+              "Enter Recipe Name",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  recipeName = value;
+                },
+                decoration: const InputDecoration(labelText: 'Recipe Name'),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Text('Mark as Favorite'),
+                  Checkbox(
+                    value: isFavorite,
+                    onChanged: (value) {
+                      isFavorite = value ?? false;
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () async {
+                // await _recipeService.saveRecipe(_authService!.getCurrentUser(), recipe)
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Display information related to team in the card format
+  /// @param {BuildContext} context - current context in the app
   void teamAlert(BuildContext context) {
     showDialog(
       context: context,

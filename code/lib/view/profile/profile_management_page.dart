@@ -32,7 +32,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
       allergies: []);
 
   // Controller for handling user-related operations.
-  late UserController userController;
+  late UserService userController;
 
   // Form key for validating and managing the form state.
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -52,7 +52,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
   void initState() {
     super.initState();
     // Initialize the user controller and fetch user data.
-    userController = UserController(widget.userId);
+    userController = UserService(widget.userId);
     _fetchUserData();
   }
 

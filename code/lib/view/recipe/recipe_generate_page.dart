@@ -1,79 +1,19 @@
 import 'dart:convert';
 
-import 'package:code/view/profile/profile_management_page.dart';
-import 'package:code/view/profile/settings_page.dart';
-import 'package:code/view/recipe/recipes_list_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../../Components/alert.dart';
 import '../../controller/auth_service.dart';
 import '../../controller/recipe_service.dart';
 import '../../model/recipe_model.dart';
-import '../../utils/theme_provider.dart';
-
-
 
 class GenerateRecipe extends StatefulWidget {
   const GenerateRecipe({super.key});
 
   @override
   State<GenerateRecipe> createState() => _GenerateRecipeState();
-}
-
-class SavedRecipeItem extends StatelessWidget {
-  final RecipeModel recipe;
-
-  SavedRecipeItem(this.recipe);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.grey[800],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Text(
-                  recipe.name,
-                  style: const TextStyle(color: Colors.blue),
-                ),
-                recipe.favourite
-                    ? Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                )
-                    : Icon(
-                  Icons.star,
-                  color: Colors.white,
-                ),
-                Text(
-                  recipe.recipe,
-                  style: const TextStyle(color: Colors.black),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Implement your functionality here (e.g., delete or edit the recipe).
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple[300],
-                  ),
-                  child: const Text("Edit Recipe"),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _GenerateRecipeState extends State<GenerateRecipe> {
@@ -88,6 +28,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
   bool showFavouriteRecipes = false;
   late var recipeName;
   final AuthService _auth = AuthService();
+  final RecipeService _recipeService = RecipeService();
   // Text editing controller for the generate recipe field
   //final TextEditingController _ingredientController = TextEditingController();
   // Index of the selected page
@@ -98,7 +39,6 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
   //bool isLoading = false;
   // Initializing alert variable to handle custom alert pop up
   final Alert _alert = Alert();
-
 
   Future<void> _generateRecipe() async {
     setState(() {
@@ -111,7 +51,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
           'https://api.openai.com/v1/engines/text-davinci-003/completions'),
       headers: {
         'Authorization':
-        'Bearer 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',
+            'Bearer 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',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
@@ -156,132 +96,128 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
     );
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final user = _auth.getCurrentUser();
 
     // Array with name for app bar header
     return Scaffold(
-        //drawer: Sidebar(user: user, selectedIndex: null,),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: ListView(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _ingredientController,
-                decoration: InputDecoration(
-                  hintText: "Enter ingredients",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
+      floatingActionButton: Visibility(
+        visible: _recipe != null,
+        child: FloatingActionButton(
+          backgroundColor: Colors.deepPurple.shade300,
+          onPressed: () async {
+            final recipeName;
+            if (_recipe != null) {
+              RecipeDialogResult? result =
+                  await _alert.saveRecipeAlert(context);
+              if (result != null && !result.isCancelled) {
+                recipeName = result.recipeName;
+                final isFavourite = result.isFavorite;
+                if (recipeName != null) {
+                  recipeModel = RecipeModel(
+                    uid: _auth!.getCurrentUser()!.uid,
+                    name: recipeName,
+                    details: _recipe!,
+                    isFavorite: isFavourite,
+                    date: DateTime.now(),
+                  );
+                  _recipeService.addRecipe(recipeModel!);
+                }
+                setState(() {
+                  savedRecipes.add(recipeModel!);
+                });
+                _ingredientController.text = "";
+                _recipe = null;
+              }
+            } else {
+              _alert.warningAlert(context, "No recipe generated yet");
+            }
+          },
+          child: const Icon(Icons.save),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView(
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _ingredientController,
+              decoration: InputDecoration(
+                hintText: "Enter ingredients",
+                filled: true,
+                focusColor: Colors.deepPurple.shade300,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
-              const SizedBox(height: 14.0),
-              Center(
-                child: isLoading
-                    ? Container(
-                  padding: const EdgeInsets.only(top: 5.0),
-                  child: const CircularProgressIndicator(),
-                )
-                    : Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ElevatedButton(
+            ),
+            const SizedBox(height: 14.0),
+            Center(
+              child: isLoading
+                  ? Container(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: CircularProgressIndicator(
+                        color: Colors.deepPurple.shade300,
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _generateRecipe,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple[300],
+                            minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.95, 50),
+                          ),
+                          child: const Text("Generate Recipe"),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+            ),
+            if (_recipe != null)
+              Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  SizedBox(
+                    height: 400,
+                    child: Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              _recipe!,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: ElevatedButton(
                       onPressed: _generateRecipe,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple[300],
-                        minimumSize: Size(MediaQuery.of(context).size.width * 0.95, 50),
                       ),
-                      child: const Text("Generate Recipe"),
+                      child: const Text("Regenerate Response"),
                     ),
-                    SizedBox(height: 10),
-
-                  ],
-                ),
+                  ),
+                ],
               ),
-
-
-
-
-
-
-              if (_recipe != null)
-                Column(
-                  children: [
-                    const SizedBox(height: 20.0),
-                    SizedBox(
-                      height: 400,
-                      child: Card(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                _recipe!,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final recipeName;
-                                  if (_recipe != null) {
-                                    RecipeDialogResult? result = await getRecipeNameDialog(context);
-                                    //final recipeName = await getRecipeNameDialog(context);
-                                    if (result != null && !result.isCancelled) {
-                                      recipeName = result.recipeName;
-                                      final isFavourite = result.isFavorite;
-                                      if(recipeName != null){
-                                        final UserId = user?.uid;
-                                        recipeModel = RecipeModel(name: recipeName, recipe: _recipe!, favourite: isFavourite);
-                                        saveRecipe(UserId!, recipeModel!);
-                                      }
-                                      setState(() {
-                                        savedRecipes.add(recipeModel!);
-                                      });
-                                      _ingredientController.text = "";
-                                      _recipe = null;
-                                    } else {
-                                      print('User canceled the dialog');
-                                    }
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurple[300],
-                                ),
-                                child: const Text("Save Recipe"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: ElevatedButton(
-                        onPressed: _generateRecipe,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple[300],
-                        ),
-                        child: const Text("Regenerate Response"),
-                      ),
-                    ),
-
-                  ],
-                ),
-
-            ],
-          ),
+          ],
         ),
+      ),
     );
   }
 }

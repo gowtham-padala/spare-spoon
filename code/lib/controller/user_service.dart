@@ -1,14 +1,15 @@
 // Importing necessary packages and local model
-import '../model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../model/user_model.dart';
+
 // Controller class for handling user-related operations in Firestore
-class UserController {
+class UserService {
   final String userId; // User ID for whom the operations are performed
   final CollectionReference userCollection; // Firestore collection reference
 
   // Constructor to initialize the UserController with a user ID
-  UserController(this.userId)
+  UserService(this.userId)
       : userCollection = FirebaseFirestore.instance.collection('users');
 
   // Create a new user document in Firestore

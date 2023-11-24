@@ -17,7 +17,7 @@ Future<RecipeDialogResult?> getRecipeNameDialog(BuildContext context) async {
       bool isFavorite = false;
 
       return AlertDialog(
-        title: Text('Enter Recipe Name'),
+        title: const Text('Enter Recipe Name'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import '../../Components/alert.dart';
 import '../../controller/auth_service.dart';
 import '../../controller/recipe_service.dart';
-import '../../model/recipe_model.dart';
 
 class GenerateRecipe extends StatefulWidget {
   const GenerateRecipe({super.key});
@@ -17,33 +16,24 @@ class GenerateRecipe extends StatefulWidget {
 }
 
 class _GenerateRecipeState extends State<GenerateRecipe> {
-  final user = FirebaseAuth.instance.currentUser;
+  // Initializing the ingredient controller text box
   final TextEditingController _ingredientController = TextEditingController();
-  String? _recipe;
+  // Initialize the variable to store recipe details
+  String? _recipeDetails;
+  // Initialized the variable to check if the app is in loading screen or not
   bool isLoading = false;
-  List<RecipeModel> savedRecipes = [];
-  RecipeModel? recipeModel;
-  var recipes;
-  bool showSavedRecipes = false;
-  bool showFavouriteRecipes = false;
-  late var recipeName;
+  // Initialized the variable to handle authentication related request
   final AuthService _auth = AuthService();
+  // Initialized the variable to handle recipe related request
   final RecipeService _recipeService = RecipeService();
-  // Text editing controller for the generate recipe field
-  //final TextEditingController _ingredientController = TextEditingController();
   // Index of the selected page
   int selectedPageIndex = 0;
-  // Initializing the _recipe variable for storing recipes
-  //String? _recipe;
-  // Variable to tell if we are in the loading state
-  //bool isLoading = false;
   // Initializing alert variable to handle custom alert pop up
   final Alert _alert = Alert();
-
   Future<void> _generateRecipe() async {
     setState(() {
       isLoading = true;
-      _recipe = null; // Removing the previous response
+      _recipeDetails = null; // Removing the previous response
     });
 
     final response = await http.post(
@@ -62,7 +52,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
 
     final data = jsonDecode(response.body);
     setState(() {
-      _recipe = data['choices'][0]['text'].trim();
+      _recipeDetails = data['choices'][0]['text'].trim();
       isLoading = false;
     });
   }
@@ -98,37 +88,18 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
 
   @override
   Widget build(BuildContext context) {
-    final user = _auth.getCurrentUser();
-
     // Array with name for app bar header
     return Scaffold(
       floatingActionButton: Visibility(
-        visible: _recipe != null,
+        visible: _recipeDetails != null,
         child: FloatingActionButton(
           backgroundColor: Colors.deepPurple.shade300,
           onPressed: () async {
-            final recipeName;
-            if (_recipe != null) {
-              RecipeDialogResult? result =
-                  await _alert.saveRecipeAlert(context);
-              if (result != null && !result.isCancelled) {
-                recipeName = result.recipeName;
-                final isFavourite = result.isFavorite;
-                if (recipeName != null) {
-                  recipeModel = RecipeModel(
-                    uid: _auth!.getCurrentUser()!.uid,
-                    name: recipeName,
-                    details: _recipe!,
-                    isFavorite: isFavourite,
-                    date: DateTime.now(),
-                  );
-                  _recipeService.addRecipe(recipeModel!);
-                }
-                setState(() {
-                  savedRecipes.add(recipeModel!);
-                });
-                _ingredientController.text = "";
-                _recipe = null;
+            if (_recipeDetails != null) {
+              SavedRecipeDialogResult? result =
+                  await _alert.saveRecipeAlert(context, _recipeDetails!);
+              if (result!.isSaved) {
+                _alert.successAlert(context, "Successfully saved the recipe");
               }
             } else {
               _alert.warningAlert(context, "No recipe generated yet");
@@ -179,7 +150,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                       ],
                     ),
             ),
-            if (_recipe != null)
+            if (_recipeDetails != null)
               Column(
                 children: [
                   const SizedBox(height: 20.0),
@@ -195,7 +166,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                         child: Column(
                           children: [
                             Text(
-                              _recipe!,
+                              _recipeDetails!,
                               style: const TextStyle(color: Colors.black),
                             ),
                           ],

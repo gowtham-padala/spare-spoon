@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:code/controller/auth_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/recipe_card.dart';
@@ -60,15 +60,16 @@ class SavedRecipeItem extends StatelessWidget {
 }
 
 class _HomePageStateMenu extends State<RecipesPage> {
-  final user = FirebaseAuth.instance.currentUser;
   final TextEditingController _ingredientController = TextEditingController();
   String? _recipe;
   bool isLoading = false;
   List<RecipeModel> savedRecipes = [];
   RecipeModel? recipeModel;
-  var recipes;
+  List<RecipeModel> recipes = [];
   bool showSavedRecipes = false;
   bool showFavouriteRecipes = false;
+
+  final AuthService _auth = AuthService();
 
   final RecipeService _recipeService = RecipeService();
 
@@ -81,8 +82,8 @@ class _HomePageStateMenu extends State<RecipesPage> {
 
   // Method to fetch and show saved recipes
   Future<void> _showSavedRecipes() async {
-    final UserId = user?.uid;
-    recipes = await _recipeService.getAllRecipesForAUser(UserId!);
+    recipes =
+        await _recipeService.getAllRecipesForAUser(_auth.getCurrentUser()!.uid);
 
     if (mounted) {
       setState(() {
@@ -111,9 +112,9 @@ class _HomePageStateMenu extends State<RecipesPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          final UserId = user?.uid;
                           recipes = await _recipeService
-                              .getAllRecipesForAUser(UserId!);
+                              .getAllFavoriteRecipesForAUser(
+                                  _auth.getCurrentUser()!.uid);
                           // Setting the flag to show saved recipes.
                           if (mounted) {
                             setState(() {
@@ -132,10 +133,8 @@ class _HomePageStateMenu extends State<RecipesPage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          final UserId = user?.uid;
-                          recipes = await _recipeService
-                              .getAllRecipesForAUser(UserId!);
-
+                          recipes = await _recipeService.getAllRecipesForAUser(
+                              _auth.getCurrentUser()!.uid);
                           // Setting the flag to show saved recipes.
                           if (mounted) {
                             setState(() {
@@ -165,12 +164,12 @@ class _HomePageStateMenu extends State<RecipesPage> {
                     child: ListView(
                       children: [
                         for (var recipe in recipes)
-                          if (recipe.favourite == true)
+                          if (recipe.isFavorite == true)
                             //SavedRecipeItem(recipe),
                             RecipeCard(
                                 name: recipe.name,
-                                description: recipe.recipe,
-                                favourite: recipe.favourite),
+                                description: recipe.details,
+                                favourite: recipe.isFavorite),
                       ],
                     ),
                   ),
@@ -191,8 +190,8 @@ class _HomePageStateMenu extends State<RecipesPage> {
                           //SavedRecipeItem(recipe),
                           RecipeCard(
                               name: recipe.name,
-                              description: recipe.recipe,
-                              favourite: recipe.favourite),
+                              description: recipe.details,
+                              favourite: recipe.isFavorite),
                       ],
                     ),
                   ),

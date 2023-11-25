@@ -1,5 +1,6 @@
 import 'package:code/controller/auth_service.dart';
 import 'package:code/controller/recipe_service.dart';
+import 'package:code/model/recipe_model.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -42,11 +43,16 @@ class Alert {
     );
   }
 
-  Future<RecipeDialogResult?> saveRecipeAlert(BuildContext context) async {
+  /// Alert for handling recipe saving request
+  /// @param {BuildContext} context - current context in the app
+  /// @param {String} recipeDetails - String details of the recipes
+  /// @return {RecipeDSavedRecipeDialogResultult of the save recipe modal
+  Future<SavedRecipeDialogResult?> saveRecipeAlert(
+      BuildContext context, String recipeDetails) async {
     String recipeName = '';
     bool isFavorite = false;
 
-    return showDialog<RecipeDialogResult>(
+    return showDialog<SavedRecipeDialogResult>(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -92,14 +98,27 @@ class Alert {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(SavedRecipeDialogResult(
+                    isSaved: false, isCancelled: false));
               },
             ),
             TextButton(
               child: const Text('Save'),
               onPressed: () async {
-                // await _recipeService.saveRecipe(_authService!.getCurrentUser(), recipe)
-                Navigator.of(context).pop();
+                var recipeModel = RecipeModel(
+                  uid: _authService!.getCurrentUser()!.uid,
+                  name: recipeName,
+                  details: recipeDetails!,
+                  isFavorite: isFavorite,
+                  date: DateTime.now(),
+                );
+                if (recipeName.trim() == "") {
+                  warningAlert(context, "Please enter a valid recipe name");
+                } else {
+                  await _recipeService.addRecipe(recipeModel);
+                  Navigator.of(context).pop(SavedRecipeDialogResult(
+                      isSaved: true, isCancelled: false));
+                }
               },
             ),
           ],
@@ -241,6 +260,8 @@ class Alert {
     );
   }
 
+  /// Display Logout confirmation dialog for logging out of the SpareSpoon app
+  /// @param {BuildContext} context - current context in the app
   Future<void> showLogoutConfirmationDialog(BuildContext context) async {
     await QuickAlert.show(
       onCancelBtnTap: () {
@@ -273,6 +294,8 @@ class Alert {
     );
   }
 
+  /// Display delete account confirmation dialog box
+  /// @param {BuildContext} context - current context in the app
   Future<void> showDeleteAccountConfirmationDialog(BuildContext context) async {
     await QuickAlert.show(
       onCancelBtnTap: () {
@@ -306,6 +329,9 @@ class Alert {
   }
 }
 
+/// Dialog box to build card for team member details
+/// @param {String} name - String name of the team member
+/// @param {string} subtitle - Student Number of the team member
 Widget buildTeamMemberCard(String name, String subtitle) {
   return Card(
     color: Colors.deepPurple.shade300,

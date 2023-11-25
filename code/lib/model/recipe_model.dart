@@ -42,7 +42,7 @@ class RecipeModel {
       uid: data['uid'] ?? "",
       name: data['name'] ?? "",
       details: data['details'] ?? "",
-      isFavorite: (data['isFavorite'] ?? 0).toDouble(),
+      isFavorite: (data['isFavorite'] ?? false),
       date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
       images: data['images']?.cast<String>(), // Assuming images are URLs.
     );

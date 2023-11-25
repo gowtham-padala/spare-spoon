@@ -1,32 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:code/model/recipe_model.dart';
 
-class RecipeDialogResult {
-  final String recipeName;
-  final bool isFavorite;
+// Class to handle the result of the save recipe dialog result
+class SavedRecipeDialogResult {
+  final bool isSaved;
   final bool isCancelled;
 
-  RecipeDialogResult(this.recipeName, this.isFavorite, this.isCancelled);
+  SavedRecipeDialogResult({required this.isSaved, required this.isCancelled});
 }
 
+/// Class to provide CRUD functionality for recipe
 class RecipeService {
   final CollectionReference recipeCollection =
       FirebaseFirestore.instance.collection('recipes');
 
+  /// Add a recipe entry to the fireStore DB
   Future<void> addRecipe(RecipeModel newEntry) async {
     await recipeCollection.add(newEntry.toMap());
   }
 
-  /// Delete a recipe entry by its ID.
-  Future<void> deleteDiary(String id) async {
+  /// Delete a recipe entry by its ID from the fireStore DB
+  Future<void> deleteRecipe(String id) async {
     await recipeCollection.doc(id).delete();
   }
 
-  /// Update a recipe entry by its ID.
-  Future<void> updateDiary(String id, RecipeModel updateEntry) async {
+  /// Update a recipe entry by its ID in the fireStore DB
+  Future<void> updateRecipe(String id, RecipeModel updateEntry) async {
     await recipeCollection.doc(id).set(updateEntry.toMap());
   }
 
+  /// Get all favorite recipe for a particular user from the database
   Future<List<RecipeModel>> getAllFavoriteRecipesForAUser(String userId) async {
     var querySnapshot = await recipeCollection.get();
     List<RecipeModel> recipes = [];
@@ -39,6 +42,7 @@ class RecipeService {
     return recipes;
   }
 
+  /// Get all the recipes for a user from the database
   Future<List<RecipeModel>> getAllRecipesForAUser(String userId) async {
     var querySnapshot = await recipeCollection.get();
     List<RecipeModel> recipes = [];

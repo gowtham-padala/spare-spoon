@@ -68,7 +68,7 @@ class _SignUpState extends State<SignUp> {
         );
 
         // Creating an instance of UserController and calling createUser
-        final userController = UserController(currentUser.uid);
+        final userController = UserService(currentUser.uid);
         await userController.createUser(userModel);
       }
       if (!mounted) return;

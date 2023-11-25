@@ -1,10 +1,15 @@
 import 'package:code/controller/auth_service.dart';
+import 'package:code/controller/recipe_service.dart';
+import 'package:code/model/recipe_model.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
 /// A utility class for displaying custom modal dialogs using QuickAlert library.
 /// This class provides methods to show error, warning, and success modals.
 class Alert {
+  final RecipeService _recipeService = RecipeService();
+  final AuthService _authService = AuthService();
+
   /// Displays an error modal dialog with the given error message.
   void errorAlert(BuildContext context, String errMsg) {
     QuickAlert.show(
@@ -38,6 +43,92 @@ class Alert {
     );
   }
 
+  /// Alert for handling recipe saving request
+  /// @param {BuildContext} context - current context in the app
+  /// @param {String} recipeDetails - String details of the recipes
+  /// @return {RecipeDSavedRecipeDialogResultult of the save recipe modal
+  Future<SavedRecipeDialogResult?> saveRecipeAlert(
+      BuildContext context, String recipeDetails) async {
+    String recipeName = '';
+    bool isFavorite = false;
+
+    return showDialog<SavedRecipeDialogResult>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.shade300,
+            ),
+            child: const Text(
+              "Enter Recipe Name",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  recipeName = value;
+                },
+                decoration: const InputDecoration(labelText: 'Recipe Name'),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Text('Mark as Favorite'),
+                  Checkbox(
+                    value: isFavorite,
+                    onChanged: (value) {
+                      isFavorite = value ?? false;
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(SavedRecipeDialogResult(
+                    isSaved: false, isCancelled: false));
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () async {
+                var recipeModel = RecipeModel(
+                  uid: _authService!.getCurrentUser()!.uid,
+                  name: recipeName,
+                  details: recipeDetails!,
+                  isFavorite: isFavorite,
+                  date: DateTime.now(),
+                );
+                if (recipeName.trim() == "") {
+                  warningAlert(context, "Please enter a valid recipe name");
+                } else {
+                  await _recipeService.addRecipe(recipeModel);
+                  Navigator.of(context).pop(SavedRecipeDialogResult(
+                      isSaved: true, isCancelled: false));
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Display information related to team in the card format
+  /// @param {BuildContext} context - current context in the app
   void teamAlert(BuildContext context) {
     showDialog(
       context: context,
@@ -169,6 +260,8 @@ class Alert {
     );
   }
 
+  /// Display Logout confirmation dialog for logging out of the SpareSpoon app
+  /// @param {BuildContext} context - current context in the app
   Future<void> showLogoutConfirmationDialog(BuildContext context) async {
     await QuickAlert.show(
       onCancelBtnTap: () {
@@ -201,6 +294,8 @@ class Alert {
     );
   }
 
+  /// Display delete account confirmation dialog box
+  /// @param {BuildContext} context - current context in the app
   Future<void> showDeleteAccountConfirmationDialog(BuildContext context) async {
     await QuickAlert.show(
       onCancelBtnTap: () {
@@ -234,6 +329,9 @@ class Alert {
   }
 }
 
+/// Dialog box to build card for team member details
+/// @param {String} name - String name of the team member
+/// @param {string} subtitle - Student Number of the team member
 Widget buildTeamMemberCard(String name, String subtitle) {
   return Card(
     color: Colors.deepPurple.shade300,

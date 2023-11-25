@@ -1,4 +1,5 @@
 import 'package:code/components/alert.dart';
+import 'package:code/components/square_tile.dart';
 import 'package:code/components/text_form_field.dart';
 import 'package:code/controller/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -131,6 +132,34 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  // Forgot password link
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // Navigate to forgot password page
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              // TODO: CREATE THE THE FORGOT PASSWORD PAGE
+                              // return const ForgotPasswordPage();
+                              return Container();
+                            }));
+                          },
+                          child: const Text(
+                            'Forgot Password?',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   const SizedBox(height: 50),
                   SizedBox(
@@ -150,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                           : const Text('Login'),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 39),
                   // Or continue with text
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -165,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Text(
-                            'Or',
+                            'Or continue with',
                             style: TextStyle(color: Colors.deepPurple[300]),
                           ),
                         ),
@@ -179,31 +208,41 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
+
+                  // Google sign in button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Google button
+                      SquareTile(
+                          onTap: () => _auth.signInWithGoogle(),
+                          imagePath: 'assets/google.png'),
+                    ],
+                  ),
                   // Sign Up button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 45,
-                    child: OutlinedButton(
-                      onPressed: widget.onPressed,
-                      style: ButtonStyle(
-                        side: MaterialStateProperty.resolveWith<BorderSide>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.disabled)) {
-                              return const BorderSide(
-                                  color: Colors.grey,
-                                  width:
-                                      2.0); // Border color and width when the button is disabled.
-                            }
-                            return BorderSide(
-                                color: Colors.deepPurple.shade300,
-                                width:
-                                    2.0); // Border color and width for the default state.
-                          },
+                  const SizedBox(height: 70),
+
+                  // Not a member? Register now
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Not a member?',
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: widget.onPressed,
+                        child: const Text(
+                          'Register now',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      child: const Text('Sign Up'),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
               ),
             ),

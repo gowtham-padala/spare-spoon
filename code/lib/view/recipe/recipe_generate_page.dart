@@ -30,31 +30,47 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
   int selectedPageIndex = 0;
   // Initializing alert variable to handle custom alert pop up
   final Alert _alert = Alert();
+
   Future<void> _generateRecipe() async {
     setState(() {
       isLoading = true;
       _recipeDetails = null; // Removing the previous response
     });
 
-    final response = await http.post(
-      Uri.parse(
-          'https://api.openai.com/v1/engines/text-davinci-003/completions'),
-      headers: {
-        'Authorization':
-            'Bearer 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',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'prompt': 'Generate a recipe using ${_ingredientController.text}',
-        'max_tokens': 1000, // Limiting to our requirement
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
+        headers: {
+          'Authorization':
+              'Bearer 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',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4-0613',
+          'messages': [
+            {'role': 'user', 'content': 'Generate a recipe using ${_ingredientController.text}'},
+          ],
+          'temperature': 0.7, // Adjust as needed
+        }),
+      );
 
-    final data = jsonDecode(response.body);
-    setState(() {
-      _recipeDetails = data['choices'][0]['text'].trim();
-      isLoading = false;
-    });
+      final data = jsonDecode(response.body);
+      setState(() {
+        if (data != null && data['choices'] != null && data['choices'].isNotEmpty && data['choices'][0]['message'] != null && data['choices'][0]['message']['content'] != null) {
+          _recipeDetails = data['choices'][0]['message']['content'].trim();
+        } else {
+          _recipeDetails = 'Sorry, I could not generate a recipe.';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _recipeDetails = 'An error occurred: ${e.toString()}';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _showLogoutConfirmationDialog(BuildContext context) async {

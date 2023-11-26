@@ -10,9 +10,9 @@ class Sidebar extends StatelessWidget {
 
   const Sidebar(
       {super.key,
-        required this.user,
-        required this.selectedIndex,
-        required this.updateSelectedIndex});
+      required this.user,
+      required this.selectedIndex,
+      required this.updateSelectedIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class Sidebar extends StatelessWidget {
 
                 ListTile(
                   leading:
-                  Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
+                      Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Recipes',
                     style: TextStyle(
@@ -86,7 +86,7 @@ class Sidebar extends StatelessWidget {
                 ),
                 ListTile(
                   leading:
-                  Icon(Icons.person, color: Colors.deepPurple.shade300),
+                      Icon(Icons.person, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Profile Management',
                     style: TextStyle(
@@ -102,7 +102,7 @@ class Sidebar extends StatelessWidget {
                 ),
                 ListTile(
                   leading:
-                  Icon(Icons.settings, color: Colors.deepPurple.shade300),
+                      Icon(Icons.settings, color: Colors.deepPurple.shade300),
                   title: Text(
                     'Settings',
                     style: TextStyle(
@@ -113,6 +113,22 @@ class Sidebar extends StatelessWidget {
                   ),
                   onTap: () {
                     updateSelectedIndex(3);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.restaurant_menu_outlined,
+                      color: Colors.deepPurple.shade300),
+                  title: Text(
+                    'Common Recipies',
+                    style: TextStyle(
+                      color: selectedIndex == 4
+                          ? Colors.deepPurple.shade300
+                          : Colors.black, // Highlight if selected
+                    ),
+                  ),
+                  onTap: () {
+                    updateSelectedIndex(4);
                     Navigator.pop(context);
                   },
                 ),

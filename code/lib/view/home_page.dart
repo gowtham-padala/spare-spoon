@@ -5,6 +5,7 @@ import 'package:code/view/profile/profile_management_page.dart';
 import 'package:code/view/profile/settings_page.dart';
 import 'package:code/view/recipe/recipe_generate_page.dart';
 import 'package:code/view/recipe/recipes_list_page.dart';
+import 'package:code/view/recipe/common_recipe_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,8 @@ class _HomePageState extends State<HomePage> {
       "Home",
       "Recipes",
       "Profile Management",
-      "Settings"
+      "Settings",
+      "Common Recipies"
     ];
     // Initializing the variable for app bar title
     String appBarTitle = appBarName[selectedPageIndex];
@@ -60,12 +62,13 @@ class _HomePageState extends State<HomePage> {
       const RecipesPage(),
       ProfileManagementPage(userId: user?.uid ?? ""),
       const SettingsPage(),
+      const CommonRecipesPage()
     ]; // Access the ThemeProvider using Provider
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Theme(
         data: ThemeData(
           brightness:
-          themeProvider.darkTheme ? Brightness.dark : Brightness.light,
+              themeProvider.darkTheme ? Brightness.dark : Brightness.light,
           // Add other theme properties as needed
         ),
         child: Scaffold(
@@ -103,7 +106,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.deepPurple.shade300,
             child: Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
               child: GNav(
                 gap: 8,
                 backgroundColor: Colors.deepPurple.shade300,
@@ -137,6 +140,10 @@ class _HomePageState extends State<HomePage> {
                   GButton(
                     icon: Icons.settings,
                     text: "Settings",
+                  ),
+                  GButton(
+                    icon: Icons.restaurant_menu_outlined,
+                    text: "Common Recipies",
                   ),
                 ],
               ),

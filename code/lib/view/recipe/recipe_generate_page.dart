@@ -5,7 +5,6 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Components/alert.dart';
-import '../../controller/auth_service.dart';
 import '../../controller/recipe_service.dart';
 import '../../controller/user_service.dart';
 import '../../model/user_model.dart';
@@ -13,8 +12,7 @@ import '../../model/user_model.dart';
 class GenerateRecipe extends StatefulWidget {
   final String userId;
 
-  const GenerateRecipe({required this.userId, Key? key})
-      : super(key: key);
+  const GenerateRecipe({required this.userId, Key? key}) : super(key: key);
 
   @override
   State<GenerateRecipe> createState() => _GenerateRecipeState();
@@ -57,9 +55,9 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
           'model': 'gpt-4-0613',
           'messages': [
             {
-            'role': 'user',
-            'content': 'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? 
-                      ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ',intolerances: ${userPreferences.intolerances.join(", ")} and allergies: ${userPreferences.allergies.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
+              'role': 'user',
+              'content':
+                  'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ',intolerances: ${userPreferences.intolerances.join(", ")} and allergies: ${userPreferences.allergies.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
             },
           ],
           'temperature': 0.7, // Adjust as needed
@@ -68,7 +66,11 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
 
       final data = jsonDecode(response.body);
       setState(() {
-        if (data != null && data['choices'] != null && data['choices'].isNotEmpty && data['choices'][0]['message'] != null && data['choices'][0]['message']['content'] != null) {
+        if (data != null &&
+            data['choices'] != null &&
+            data['choices'].isNotEmpty &&
+            data['choices'][0]['message'] != null &&
+            data['choices'][0]['message']['content'] != null) {
           _recipeDetails = data['choices'][0]['message']['content'].trim();
         } else {
           _recipeDetails = 'Sorry, I could not generate a recipe.';
@@ -164,6 +166,21 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
+                // Add a suffix icon for generating a new recipe
+                suffixIcon: IconButton(
+                  icon: _recipeDetails != null
+                      ? Icon(
+                          Icons.autorenew,
+                          color: Colors.deepPurple.shade300,
+                          size: 35,
+                        )
+                      : Icon(
+                          Icons.search,
+                          color: Colors.deepPurple.shade300,
+                          size: 35,
+                        ),
+                  onPressed: _generateRecipe,
+                ),
               ),
             ),
             const SizedBox(height: 14.0),
@@ -178,36 +195,16 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
               secondary: const Icon(Icons.shopping_cart),
             ),
             const SizedBox(height: 14.0),
-            Center(
-              child: isLoading
-                  ? Container(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: CircularProgressIndicator(
-                        color: Colors.deepPurple.shade300,
-                      ),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _generateRecipe,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple[300],
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width * 0.95, 50),
-                          ),
-                          child: const Text(
-                            "GENERATE RECIPE",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
+            Visibility(
+              visible: isLoading,
+              child: Container(
+                padding: const EdgeInsets.only(top: 100.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.deepPurple.shade300,
+                  ),
+                ),
+              ),
             ),
             if (_recipeDetails != null)
               Column(

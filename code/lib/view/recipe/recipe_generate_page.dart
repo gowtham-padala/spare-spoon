@@ -59,7 +59,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
             {
             'role': 'user',
             'content': 'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? 
-                      ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ' and intolerances: ${userPreferences.intolerances.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe only using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
+                      ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ',intolerances: ${userPreferences.intolerances.join(", ")} and allergies: ${userPreferences.allergies.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
             },
           ],
           'temperature': 0.7, // Adjust as needed

@@ -25,13 +25,23 @@ class RecipeCard extends StatefulWidget {
 class _RecipeCardState extends State<RecipeCard> {
   @override
   Widget build(BuildContext context) {
-    Alert _alert = Alert();
+    Alert alert = Alert();
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
       color: Colors.deepPurple.shade300,
       child: ListTile(
+        leading:
+            widget.recipe.images != null && widget.recipe.images!.isNotEmpty
+                ? CircleAvatar(
+                    backgroundImage: NetworkImage(widget.recipe.images![0]),
+                  )
+                : const CircleAvatar(
+                    // Placeholder image or empty if no images available
+                    backgroundImage: NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/flutterauth-ff1a9.appspot.com/o/food.jpg?alt=media&token=e86eb7cd-4d0f-4c1f-ab1e-d5589b5d89d1"),
+                  ),
         title: Text(
           widget.recipe.name,
           style: const TextStyle(
@@ -67,7 +77,7 @@ class _RecipeCardState extends State<RecipeCard> {
             GestureDetector(
               child: const Icon(Icons.delete, color: Colors.white),
               onTap: () async {
-                await _alert.showRecipeDeleteConfirmationDialog(
+                await alert.showRecipeDeleteConfirmationDialog(
                     context, widget.recipeDocID);
                 widget.onRecipeUpdated();
               },
@@ -79,8 +89,8 @@ class _RecipeCardState extends State<RecipeCard> {
             context,
             MaterialPageRoute(
               builder: (context) => RecipesDetailsPage(
-                name: widget.recipe.name,
-                description: widget.recipe.details,
+                recipeDocID: widget.recipeDocID,
+                recipeObj: widget.recipe,
               ),
             ),
           );

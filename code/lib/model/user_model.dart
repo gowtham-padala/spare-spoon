@@ -10,7 +10,7 @@ class UserModel {
   final int age; // User's age
   final List<String> dietaryPreferences; // List of dietary preferences
   final List<String> intolerances; // List of intolerances
-  final List<String> allergies; // List of allergies
+  final List<String> allergies;
 
   // Constructor to initialize UserModel with required attributes
   UserModel({

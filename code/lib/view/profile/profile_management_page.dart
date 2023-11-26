@@ -132,6 +132,12 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
           // Add other theme properties as needed
         ),
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.deepPurple.shade300,
+            onPressed: _updateUserData,
+            tooltip: "Update Profile",
+            child: const Icon(Icons.update),
+          ),
           body: SingleChildScrollView(
             child: _buildProfileContent(),
           ),
@@ -176,16 +182,6 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
               "Allergies:",
               allergiesController,
               Icons.no_food,
-            ),
-            // Button to trigger the update of user information.
-            ElevatedButton(
-              onPressed: _updateUserData,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple[300],
-              ),
-              child: const Text(
-                "Update Information",
-              ),
             ),
           ],
         ),

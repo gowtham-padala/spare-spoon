@@ -1,13 +1,15 @@
+import 'package:code/model/recipe_model.dart';
 import 'package:code/utils/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class RecipesDetailsPage extends StatelessWidget {
-  final String name;
-  final String description;
+  final String recipeDocID;
+  final RecipeModel recipeObj;
 
   const RecipesDetailsPage(
-      {required this.name, required this.description, Key? key})
+      {required this.recipeDocID, required this.recipeObj, Key? key})
       : super(key: key);
 
   @override
@@ -21,11 +23,6 @@ class RecipesDetailsPage extends StatelessWidget {
           // Add other theme properties as needed
         ),
         child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.deepPurple.shade300,
-            onPressed: () {},
-            child: const Icon(Icons.add),
-          ),
           appBar: AppBar(
             leading: IconButton(
               onPressed: () {
@@ -64,7 +61,7 @@ class RecipesDetailsPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Text(name,
+                            Text(recipeObj.name,
                                 style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -85,7 +82,7 @@ class RecipesDetailsPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
-                    height: 500,
+                    height: 400,
                     child: Card(
                       color: Colors.deepPurple.shade300,
                       elevation: 5,
@@ -96,7 +93,7 @@ class RecipesDetailsPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            description,
+                            recipeObj.details,
                             textAlign: TextAlign.justify,
                             style: const TextStyle(
                               fontSize: 16,
@@ -107,6 +104,37 @@ class RecipesDetailsPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  if (recipeObj.images!.isNotEmpty)
+                    SizedBox(
+                      height: 300,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                        ),
+                        itemCount: recipeObj.images!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Card(
+                              elevation: 3.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(1.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(1.0),
+                                child: FadeInImage.memoryNetwork(
+                                  placeholder: kTransparentImage,
+                                  image: recipeObj.images![index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   // Add more details here about how to make the recipe
                 ],
               ),

@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.17.0
   firebase_auth: ^4.10.1
+  firebase_storage: ^11.5.0
   http: ^1.1.0
   cloud_firestore: ^4.11.0
   firebase_ui_auth: ^1.9.1
@@ -47,10 +48,12 @@ dependencies:
   google_nav_bar: ^5.0.6
   pdf: ^3.10.6
   file_picker: ^6.1.1
+  transparent_image: ^2.0.1
   path_provider: ^2.1.1
   printing: ^5.11.1
   share: ^2.0.4
   flutter_speed_dial: ^7.0.0
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

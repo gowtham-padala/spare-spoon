@@ -102,48 +102,45 @@ class _HomePageState extends State<HomePage> {
           ),
           bottomNavigationBar: Container(
             color: Colors.deepPurple.shade300,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0),
-              child: GNav(
-                gap: 8,
-                backgroundColor: Colors.deepPurple.shade300,
-                color: Colors.white54,
-                activeColor: Colors.white,
-                tabBackgroundColor: Colors.white38,
-                padding: const EdgeInsets.all(16),
-                onTabChange: (index) {
-                  setState(() {
-                    selectedPageIndex = index;
-                    // Set the appBarTitle based on the selected index
-                    appBarTitle = appBarName[index];
-                  });
-
-                  // Use PageController to navigate to the selected page
-                  _pageController.jumpToPage(index);
-                },
-                tabs: const [
-                  GButton(
-                    icon: Icons.home,
-                    text: "Home",
-                  ),
-                  GButton(
-                    icon: Icons.food_bank,
-                    text: "Recipes",
-                  ),
-                  GButton(
-                    icon: Icons.restaurant_menu_outlined,
-                    text: "Common Recipes",
-                  ),
-                  GButton(
-                    icon: Icons.person,
-                    text: "Profile",
-                  ),
-                  GButton(
-                    icon: Icons.settings,
-                    text: "Settings",
-                  ),
-                ],
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                child: GNav(
+                  gap: 8,
+                  backgroundColor: Colors.deepPurple.shade300,
+                  color: Colors.white54,
+                  activeColor: Colors.white,
+                  tabBackgroundColor: Colors.white38,
+                  padding: const EdgeInsets.all(16),
+                  selectedIndex: selectedPageIndex,
+                  onTabChange: (index) {
+                    updateSelectedIndex(index);
+                  },
+                  tabs: const [
+                    GButton(
+                      icon: Icons.home,
+                      text: "Home",
+                    ),
+                    GButton(
+                      icon: Icons.food_bank,
+                      text: "Recipes",
+                    ),
+                    GButton(
+                      icon: Icons.restaurant_menu_outlined,
+                      text: "Common Recipes",
+                    ),
+                    GButton(
+                      icon: Icons.person,
+                      text: "Profile",
+                    ),
+                    GButton(
+                      icon: Icons.settings,
+                      text: "Settings",
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

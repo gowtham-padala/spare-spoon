@@ -6,7 +6,8 @@ class RecipeModel {
   final String name; // Name of the recipe
   final String details; // Details of the recipe
   bool isFavorite = false; // If recipe is marked favorite or not
-  DateTime date; // Date of the diary entry.
+  DateTime creationDate; // Date of the diary entry.
+  DateTime updateDate; // Date of the diary entry.
   List<String>? images; // Use a more specific type if possible.
 
   RecipeModel({
@@ -15,7 +16,8 @@ class RecipeModel {
     required this.name,
     required this.details,
     required this.isFavorite,
-    required this.date,
+    required this.creationDate,
+    required this.updateDate,
     this.images,
   });
 
@@ -25,7 +27,8 @@ class RecipeModel {
       'name': name,
       'details': details,
       'isFavorite': isFavorite,
-      'date': Timestamp.fromDate(date),
+      'creationDate': Timestamp.fromDate(creationDate),
+      'updateDate': Timestamp.fromDate(updateDate),
       'images': images,
     };
   }
@@ -36,14 +39,16 @@ class RecipeModel {
     if (data == null || data.isEmpty) {
       throw Exception("Invalid data or empty document");
     }
-
     return RecipeModel(
       id: snapshot.id,
       uid: data['uid'] ?? "",
       name: data['name'] ?? "",
       details: data['details'] ?? "",
       isFavorite: (data['isFavorite'] ?? false),
-      date: (data['date'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      creationDate:
+          (data['creationDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updateDate:
+          (data['updateDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       images: data['images']?.cast<String>(), // Assuming images are URLs.
     );
   }

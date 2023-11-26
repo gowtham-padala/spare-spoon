@@ -1,9 +1,10 @@
 // Importing necessary packages and files
 import 'package:flutter/material.dart';
-import '../../model/recipe_model.dart';
+
 import '../../Components/alert.dart';
 import '../../controller/recipe_service.dart';
 import '../../model/common_recipe_model.dart';
+import '../../model/recipe_model.dart';
 
 // Stateless widget to display details of a common recipe
 class CommonRecipeDetailsPage extends StatelessWidget {
@@ -59,7 +60,8 @@ class CommonRecipeDetailsPage extends StatelessWidget {
                   name: commonRecipe.name,
                   details: commonRecipe.description,
                   isFavorite: false,
-                  date: DateTime.now(),
+                  creationDate: DateTime.now(),
+                  updateDate: DateTime.now(),
                 );
 
                 // Adding the new recipe to the user's collection

@@ -21,7 +21,20 @@ class RecipesDetailsPage extends StatelessWidget {
           // Add other theme properties as needed
         ),
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.deepPurple.shade300,
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+              ),
+            ),
             backgroundColor: Colors.deepPurple.shade300,
             title: const Center(
               child: Text(
@@ -72,7 +85,7 @@ class RecipesDetailsPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
-                    height: 300,
+                    height: 500,
                     child: Card(
                       color: Colors.deepPurple.shade300,
                       elevation: 5,

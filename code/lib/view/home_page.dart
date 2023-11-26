@@ -3,9 +3,9 @@ import 'package:code/controller/auth_service.dart';
 import 'package:code/utils/theme_provider.dart';
 import 'package:code/view/profile/profile_management_page.dart';
 import 'package:code/view/profile/settings_page.dart';
+import 'package:code/view/recipe/common_recipe_page.dart';
 import 'package:code/view/recipe/recipe_generate_page.dart';
 import 'package:code/view/recipe/recipes_list_page.dart';
-import 'package:code/view/recipe/common_recipe_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Initializing variable for _auth services
   final AuthService _auth = AuthService();
-  // Text editing controller for the generate recipe field
-  final TextEditingController _ingredientController = TextEditingController();
   // Index of the selected page
   int selectedPageIndex = 0;
   // Variable to tell if we are in the loading state
@@ -49,9 +47,9 @@ class _HomePageState extends State<HomePage> {
     final List<String> appBarName = [
       "Home",
       "Recipes",
+      "Common Recipes",
       "Profile Management",
       "Settings",
-      "Common Recipies"
     ];
     // Initializing the variable for app bar title
     String appBarTitle = appBarName[selectedPageIndex];
@@ -60,9 +58,9 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> pages = [
       GenerateRecipe(userId: user?.uid ?? ""),
       const RecipesPage(),
+      const CommonRecipesPage(),
       ProfileManagementPage(userId: user?.uid ?? ""),
       const SettingsPage(),
-      const CommonRecipesPage()
     ]; // Access the ThemeProvider using Provider
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Theme(
@@ -106,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.deepPurple.shade300,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  const EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0),
               child: GNav(
                 gap: 8,
                 backgroundColor: Colors.deepPurple.shade300,
@@ -134,16 +132,16 @@ class _HomePageState extends State<HomePage> {
                     text: "Recipes",
                   ),
                   GButton(
+                    icon: Icons.restaurant_menu_outlined,
+                    text: "Common Recipes",
+                  ),
+                  GButton(
                     icon: Icons.person,
                     text: "Profile",
                   ),
                   GButton(
                     icon: Icons.settings,
                     text: "Settings",
-                  ),
-                  GButton(
-                    icon: Icons.restaurant_menu_outlined,
-                    text: "Common Recipies",
                   ),
                 ],
               ),

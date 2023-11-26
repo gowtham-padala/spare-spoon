@@ -21,7 +21,13 @@ class RecipeService {
 
   /// Delete a recipe entry by its ID from the fireStore DB
   Future<void> deleteRecipe(String id) async {
-    await recipeCollection.doc(id).delete();
+    print("Deleting recipe with ID: $id");
+    try {
+      await recipeCollection.doc(id).delete();
+      print("Recipe deleted successfully");
+    } catch (e) {
+      print("Error deleting recipe: $e");
+    }
   }
 
   /// Update a recipe entry by its ID in the fireStore DB
@@ -49,6 +55,7 @@ class RecipeService {
 
     for (var doc in querySnapshot.docs) {
       var entry = RecipeModel.fromMap(doc);
+      print(entry.id);
       if (entry.uid == userId) {
         recipes.add(entry);
       }

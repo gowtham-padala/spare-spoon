@@ -72,7 +72,7 @@ class Sidebar extends StatelessWidget {
                   leading:
                       Icon(Icons.restaurant, color: Colors.deepPurple.shade300),
                   title: Text(
-                    'Recipes',
+                    'Saved Recipes',
                     style: TextStyle(
                       color: selectedIndex == 1
                           ? Colors.deepPurple.shade300
@@ -85,10 +85,10 @@ class Sidebar extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading:
-                      Icon(Icons.person, color: Colors.deepPurple.shade300),
+                  leading: Icon(Icons.restaurant_menu_outlined,
+                      color: Colors.deepPurple.shade300),
                   title: Text(
-                    'Profile Management',
+                    'Common Recipes',
                     style: TextStyle(
                       color: selectedIndex == 2
                           ? Colors.deepPurple.shade300
@@ -102,9 +102,9 @@ class Sidebar extends StatelessWidget {
                 ),
                 ListTile(
                   leading:
-                      Icon(Icons.settings, color: Colors.deepPurple.shade300),
+                      Icon(Icons.person, color: Colors.deepPurple.shade300),
                   title: Text(
-                    'Settings',
+                    'Profile Management',
                     style: TextStyle(
                       color: selectedIndex == 3
                           ? Colors.deepPurple.shade300
@@ -117,10 +117,10 @@ class Sidebar extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.restaurant_menu_outlined,
-                      color: Colors.deepPurple.shade300),
+                  leading:
+                      Icon(Icons.settings, color: Colors.deepPurple.shade300),
                   title: Text(
-                    'Common Recipies',
+                    'Settings',
                     style: TextStyle(
                       color: selectedIndex == 4
                           ? Colors.deepPurple.shade300

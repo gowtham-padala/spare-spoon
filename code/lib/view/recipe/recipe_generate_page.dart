@@ -1,11 +1,10 @@
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Components/alert.dart';
-import '../../controller/auth_service.dart';
 import '../../controller/recipe_service.dart';
 import '../../controller/user_service.dart';
 import '../../model/user_model.dart';
@@ -13,8 +12,7 @@ import '../../model/user_model.dart';
 class GenerateRecipe extends StatefulWidget {
   final String userId;
 
-  const GenerateRecipe({required this.userId, Key? key})
-      : super(key: key);
+  const GenerateRecipe({required this.userId, Key? key}) : super(key: key);
 
   @override
   State<GenerateRecipe> createState() => _GenerateRecipeState();
@@ -57,9 +55,9 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
           'model': 'gpt-4-0613',
           'messages': [
             {
-            'role': 'user',
-            'content': 'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? 
-                      ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ',intolerances: ${userPreferences.intolerances.join(", ")} and allergies: ${userPreferences.allergies.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
+              'role': 'user',
+              'content':
+                  'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ',intolerances: ${userPreferences.intolerances.join(", ")} and allergies: ${userPreferences.allergies.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
             },
           ],
           'temperature': 0.7, // Adjust as needed
@@ -68,7 +66,11 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
 
       final data = jsonDecode(response.body);
       setState(() {
-        if (data != null && data['choices'] != null && data['choices'].isNotEmpty && data['choices'][0]['message'] != null && data['choices'][0]['message']['content'] != null) {
+        if (data != null &&
+            data['choices'] != null &&
+            data['choices'].isNotEmpty &&
+            data['choices'][0]['message'] != null &&
+            data['choices'][0]['message']['content'] != null) {
           _recipeDetails = data['choices'][0]['message']['content'].trim();
         } else {
           _recipeDetails = 'Sorry, I could not generate a recipe.';
@@ -85,55 +87,68 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
     }
   }
 
-  Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Do you want to log out?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // Array with name for app bar header
     return Scaffold(
       floatingActionButton: Visibility(
         visible: _recipeDetails != null,
-        child: FloatingActionButton(
+        child: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: const IconThemeData(size: 22.0),
+          // This is ignored if animatedIcon is non null
+          // child: Icon(Icons.add),
+          visible: true,
+          // If true user is forced to close dial manually
+          // by tapping main button and overlay is not rendered.
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          tooltip: 'Speed Dial',
+          heroTag: 'speed-dial-hero-tag',
           backgroundColor: Colors.deepPurple.shade300,
-          onPressed: () async {
-            if (_recipeDetails != null) {
-              SavedRecipeDialogResult? result =
-                  await _alert.saveRecipeAlert(context, _recipeDetails!);
-              if (result!.isSaved) {
-                _alert.successAlert(context, "Successfully saved the recipe");
-              }
-            } else {
-              _alert.warningAlert(context, "No recipe generated yet");
-            }
-          },
-          child: const Icon(Icons.save),
+          foregroundColor: Colors.white,
+          elevation: 8.0,
+          shape: const CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: const Icon(
+                Icons.save,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.deepPurple.shade300,
+              label: 'Save Recipe',
+              labelStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              onTap: () async {
+                if (_recipeDetails != null) {
+                  SavedRecipeDialogResult? result =
+                      await _alert.saveRecipeAlert(context, _recipeDetails!);
+                  if (result!.isSaved) {
+                    _alert.successAlert(
+                        context, "Successfully saved the recipe");
+                  }
+                } else {
+                  _alert.warningAlert(context, "No recipe generated yet");
+                }
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.refresh, color: Colors.white),
+              backgroundColor: Colors.deepPurple.shade300,
+              label: 'Regenerate Response',
+              labelStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              onTap: _generateRecipe,
+            ),
+          ],
         ),
       ),
       body: Padding(
@@ -151,6 +166,21 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
+                // Add a suffix icon for generating a new recipe
+                suffixIcon: IconButton(
+                  icon: _recipeDetails != null
+                      ? Icon(
+                          Icons.autorenew,
+                          color: Colors.deepPurple.shade300,
+                          size: 35,
+                        )
+                      : Icon(
+                          Icons.search,
+                          color: Colors.deepPurple.shade300,
+                          size: 35,
+                        ),
+                  onPressed: _generateRecipe,
+                ),
               ),
             ),
             const SizedBox(height: 14.0),
@@ -165,29 +195,16 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
               secondary: const Icon(Icons.shopping_cart),
             ),
             const SizedBox(height: 14.0),
-            Center(
-              child: isLoading
-                  ? Container(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: CircularProgressIndicator(
-                        color: Colors.deepPurple.shade300,
-                      ),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _generateRecipe,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple[300],
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width * 0.95, 50),
-                          ),
-                          child: const Text("Generate Recipe"),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
+            Visibility(
+              visible: isLoading,
+              child: Container(
+                padding: const EdgeInsets.only(top: 100.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.deepPurple.shade300,
+                  ),
+                ),
+              ),
             ),
             if (_recipeDetails != null)
               Column(
@@ -211,16 +228,6 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: ElevatedButton(
-                      onPressed: _generateRecipe,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple[300],
-                      ),
-                      child: const Text("Regenerate Response"),
                     ),
                   ),
                 ],

@@ -1,9 +1,10 @@
 // Importing necessary packages and files
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import './common_recipe_details_page.dart';
 import '../../controller/common_recipe_service.dart';
 import '../../model/common_recipe_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import './common_recipe_details_page.dart';
 
 // Creating a stateful widget for the CommonRecipesPage
 class CommonRecipesPage extends StatefulWidget {
@@ -58,13 +59,13 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
                   padding: const EdgeInsets.all(12.0),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
+                      horizontal: 30.0,
+                      vertical: 10.0,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple.shade100, // Background color
+                      color: Colors.deepPurple.shade300, // Background color
                       border: Border.all(
-                        color: Colors.black,
+                        color: Colors.deepPurple.shade200,
                         width: 2.0,
                       ),
                       borderRadius: BorderRadius.circular(14.0),
@@ -72,10 +73,10 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
                     child: const Text(
                       "Deliciously Recommended Recipes!",
                       style: TextStyle(
-                        fontSize: 13,
-                        fontStyle: FontStyle.italic,
-                        decoration: TextDecoration.underline,
-                      ),
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.3),
                     ),
                   ),
                 ),

@@ -34,6 +34,8 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
   // Initializing alert variable to handle custom alert pop up
   final Alert _alert = Alert();
 
+  bool _isWillingToShopForMore = false;
+
   Future<void> _generateRecipe() async {
     setState(() {
       isLoading = true;
@@ -56,7 +58,7 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
           'messages': [
             {
             'role': 'user',
-            'content': 'Generate a recipe only using ${_ingredientController.text}${userPreferences != null ? 
+            'content': 'Generate a recipe ${_isWillingToShopForMore ? '' : 'only'} using ${_ingredientController.text}${userPreferences != null ? 
                       ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ' and intolerances: ${userPreferences.intolerances.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe only using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
             },
           ],
@@ -150,6 +152,17 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
+            ),
+            const SizedBox(height: 14.0),
+            CheckboxListTile(
+              title: const Text("Willing to shop for more ingredients"),
+              value: _isWillingToShopForMore,
+              onChanged: (bool? value) {
+                setState(() {
+                  _isWillingToShopForMore = value ?? false;
+                });
+              },
+              secondary: const Icon(Icons.shopping_cart),
             ),
             const SizedBox(height: 14.0),
             Center(

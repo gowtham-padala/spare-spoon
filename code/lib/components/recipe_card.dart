@@ -1,16 +1,20 @@
+import 'package:code/Components/alert.dart';
+import 'package:code/controller/recipe_service.dart';
+import 'package:code/model/recipe_model.dart';
+import 'package:code/view/recipe/recipe_update_page.dart';
 import 'package:flutter/material.dart';
 
 import '../view/recipe/recipes_detail_page.dart';
 
 class RecipeCard extends StatefulWidget {
-  final String name;
-  final String description;
-  late bool favourite;
+  final String recipeDocID;
+  final RecipeModel recipe;
+  final Function() onRecipeUpdated;
 
   RecipeCard({
-    required this.name,
-    required this.description,
-    required this.favourite,
+    required this.recipeDocID,
+    required this.recipe,
+    required this.onRecipeUpdated,
     Key? key,
   }) : super(key: key);
 
@@ -21,6 +25,7 @@ class RecipeCard extends StatefulWidget {
 class _RecipeCardState extends State<RecipeCard> {
   @override
   Widget build(BuildContext context) {
+    Alert _alert = Alert();
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -28,7 +33,7 @@ class _RecipeCardState extends State<RecipeCard> {
       color: Colors.deepPurple.shade300,
       child: ListTile(
         title: Text(
-          widget.name,
+          widget.recipe.name,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -40,19 +45,31 @@ class _RecipeCardState extends State<RecipeCard> {
             GestureDetector(
               child: Icon(
                 Icons.star,
-                color: widget.favourite ? Colors.yellow : Colors.white,
+                color: widget.recipe.isFavorite ? Colors.yellow : Colors.white,
               ),
-              onTap: () {
+              onTap: () async {
                 setState(() {
-                  widget.favourite = !widget.favourite;
+                  RecipeModel updatedRecipeModel = RecipeModel(
+                      uid: widget.recipe.uid,
+                      name: widget.recipe.name,
+                      details: widget.recipe.details,
+                      isFavorite: !widget.recipe.isFavorite,
+                      creationDate: widget.recipe.creationDate,
+                      updateDate: widget.recipe.updateDate);
+                  RecipeService()
+                      .updateRecipe(widget.recipe.id!, updatedRecipeModel);
+                  widget.recipe.isFavorite = !widget.recipe.isFavorite;
+                  widget.onRecipeUpdated();
                 });
               },
             ),
             const SizedBox(width: 12),
             GestureDetector(
               child: const Icon(Icons.delete, color: Colors.white),
-              onTap: () {
-                _showDeleteConfirmationDialog(context);
+              onTap: () async {
+                await _alert.showRecipeDeleteConfirmationDialog(
+                    context, widget.recipeDocID);
+                widget.onRecipeUpdated();
               },
             ),
           ],
@@ -62,8 +79,8 @@ class _RecipeCardState extends State<RecipeCard> {
             context,
             MaterialPageRoute(
               builder: (context) => RecipesDetailsPage(
-                name: widget.name,
-                description: widget.description,
+                name: widget.recipe.name,
+                description: widget.recipe.details,
               ),
             ),
           );
@@ -72,43 +89,14 @@ class _RecipeCardState extends State<RecipeCard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RecipesDetailsPage(
-                name: widget.name,
-                description: widget.description,
+              builder: (context) => UpdateRecipePage(
+                recipeDocID: widget.recipeDocID,
+                recipeObj: widget.recipe,
               ),
             ),
           );
         },
       ),
-    );
-  }
-
-  Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete Recipe?'),
-          content: const Text('Are you sure you want to delete this recipe?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () {
-                // Add the code here to delete the recipe from Firestore.
-                // You may need to pass some identifier or key to identify which recipe to delete.
-                // After deleting, you can use Navigator.of(context).pop() to close the dialog.
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }

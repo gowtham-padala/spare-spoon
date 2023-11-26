@@ -5,7 +5,7 @@ import '../model/recipe_model.dart';
 class SavedRecipeItem extends StatelessWidget {
   final RecipeModel recipe;
 
-  SavedRecipeItem(this.recipe);
+  const SavedRecipeItem(this.recipe, {super.key});
 
   @override
   Widget build(BuildContext context) {

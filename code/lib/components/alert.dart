@@ -54,10 +54,10 @@ class Alert {
 
     return showDialog<SavedRecipeDialogResult>(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
           title: Container(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
               color: Colors.deepPurple.shade300,
             ),
@@ -71,46 +71,47 @@ class Alert {
               ),
             ),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) {
-                  recipeName = value;
-                },
-                decoration: const InputDecoration(labelText: 'Recipe Name'),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Text('Mark as Favorite'),
-                  Checkbox(
-                    value: isFavorite,
-                    onChanged: (value) {
-                      isFavorite = value ?? false;
-                    },
-                  ),
-                ],
-              ),
-            ],
+          titlePadding: const EdgeInsets.all(0),
+          content: SizedBox(
+            height: 65,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    recipeName = value;
+                  },
+                  decoration: const InputDecoration(labelText: 'Recipe Name'),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style:
+                    TextStyle(fontSize: 18, color: Colors.deepPurple.shade300),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(SavedRecipeDialogResult(
                     isSaved: false, isCancelled: false));
               },
             ),
             TextButton(
-              child: const Text('Save'),
+              child: Text(
+                'Save',
+                style:
+                    TextStyle(fontSize: 18, color: Colors.deepPurple.shade300),
+              ),
               onPressed: () async {
                 var recipeModel = RecipeModel(
                   uid: _authService!.getCurrentUser()!.uid,
                   name: recipeName,
                   details: recipeDetails!,
-                  isFavorite: isFavorite,
-                  date: DateTime.now(),
+                  isFavorite: isFavorite, // Use the local variable
+                  creationDate: DateTime.now(),
+                  updateDate: DateTime.now(),
                 );
                 if (recipeName.trim() == "") {
                   warningAlert(context, "Please enter a valid recipe name");
@@ -321,6 +322,41 @@ class Alert {
       textColor: Colors.black,
       onConfirmBtnTap: () async {
         await AuthService().deleteAccount();
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+    );
+  }
+
+  /// Display delete recipe confirmation dialog box
+  /// @param {BuildContext} context - current context in the app
+  Future<void> showRecipeDeleteConfirmationDialog(
+      BuildContext context, String recipeID) async {
+    await QuickAlert.show(
+      onCancelBtnTap: () {
+        Navigator.pop(context);
+      },
+      context: context,
+      type: QuickAlertType.confirm,
+      text: 'Recipe deletion process is irreversible',
+      titleAlignment: TextAlign.center,
+      textAlignment: TextAlign.center,
+      confirmBtnText: 'Yes',
+      cancelBtnText: 'No',
+      confirmBtnColor: Colors.deepPurple[300]!,
+      headerBackgroundColor: Colors.white,
+      confirmBtnTextStyle: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      cancelBtnTextStyle: const TextStyle(
+        color: Colors.black,
+      ),
+      titleColor: Colors.black,
+      textColor: Colors.black,
+      onConfirmBtnTap: () async {
+        await _recipeService.deleteRecipe(recipeID);
         if (context.mounted) {
           Navigator.of(context).pop();
         }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Components/alert.dart';
@@ -57,55 +57,68 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
     });
   }
 
-  Future<void> _showLogoutConfirmationDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Do you want to log out?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // Array with name for app bar header
     return Scaffold(
       floatingActionButton: Visibility(
         visible: _recipeDetails != null,
-        child: FloatingActionButton(
+        child: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: const IconThemeData(size: 22.0),
+          // This is ignored if animatedIcon is non null
+          // child: Icon(Icons.add),
+          visible: true,
+          // If true user is forced to close dial manually
+          // by tapping main button and overlay is not rendered.
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          tooltip: 'Speed Dial',
+          heroTag: 'speed-dial-hero-tag',
           backgroundColor: Colors.deepPurple.shade300,
-          onPressed: () async {
-            if (_recipeDetails != null) {
-              SavedRecipeDialogResult? result =
-                  await _alert.saveRecipeAlert(context, _recipeDetails!);
-              if (result!.isSaved) {
-                _alert.successAlert(context, "Successfully saved the recipe");
-              }
-            } else {
-              _alert.warningAlert(context, "No recipe generated yet");
-            }
-          },
-          child: const Icon(Icons.save),
+          foregroundColor: Colors.white,
+          elevation: 8.0,
+          shape: const CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: const Icon(
+                Icons.save,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.deepPurple.shade300,
+              label: 'Save Recipe',
+              labelStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              onTap: () async {
+                if (_recipeDetails != null) {
+                  SavedRecipeDialogResult? result =
+                      await _alert.saveRecipeAlert(context, _recipeDetails!);
+                  if (result!.isSaved) {
+                    _alert.successAlert(
+                        context, "Successfully saved the recipe");
+                  }
+                } else {
+                  _alert.warningAlert(context, "No recipe generated yet");
+                }
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.refresh, color: Colors.white),
+              backgroundColor: Colors.deepPurple.shade300,
+              label: 'Regenerate Response',
+              labelStyle: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              onTap: _generateRecipe,
+            ),
+          ],
         ),
       ),
       body: Padding(
@@ -144,7 +157,14 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                             minimumSize: Size(
                                 MediaQuery.of(context).size.width * 0.95, 50),
                           ),
-                          child: const Text("Generate Recipe"),
+                          child: const Text(
+                            "GENERATE RECIPE",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 10),
                       ],
@@ -172,16 +192,6 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: ElevatedButton(
-                      onPressed: _generateRecipe,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple[300],
-                      ),
-                      child: const Text("Regenerate Response"),
                     ),
                   ),
                 ],

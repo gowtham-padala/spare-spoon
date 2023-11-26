@@ -7,25 +7,28 @@ import 'package:http/http.dart' as http;
 import '../../Components/alert.dart';
 import '../../controller/auth_service.dart';
 import '../../controller/recipe_service.dart';
+import '../../controller/user_service.dart';
+import '../../model/user_model.dart';
 
 class GenerateRecipe extends StatefulWidget {
-  const GenerateRecipe({super.key});
+  final String userId;
+
+  const GenerateRecipe({required this.userId, Key? key})
+      : super(key: key);
 
   @override
   State<GenerateRecipe> createState() => _GenerateRecipeState();
 }
 
 class _GenerateRecipeState extends State<GenerateRecipe> {
+  // Controller for handling user-related operations.
+  late UserService userController;
   // Initializing the ingredient controller text box
   final TextEditingController _ingredientController = TextEditingController();
   // Initialize the variable to store recipe details
   String? _recipeDetails;
   // Initialized the variable to check if the app is in loading screen or not
   bool isLoading = false;
-  // Initialized the variable to handle authentication related request
-  final AuthService _auth = AuthService();
-  // Initialized the variable to handle recipe related request
-  final RecipeService _recipeService = RecipeService();
   // Index of the selected page
   int selectedPageIndex = 0;
   // Initializing alert variable to handle custom alert pop up
@@ -36,6 +39,9 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
       isLoading = true;
       _recipeDetails = null; // Removing the previous response
     });
+
+    userController = UserService(widget.userId);
+    UserModel? userPreferences = await userController.getUserData();
 
     try {
       final response = await http.post(
@@ -48,7 +54,11 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
         body: jsonEncode({
           'model': 'gpt-4-0613',
           'messages': [
-            {'role': 'user', 'content': 'Generate a recipe using ${_ingredientController.text}'},
+            {
+            'role': 'user',
+            'content': 'Generate a recipe only using ${_ingredientController.text}${userPreferences != null ? 
+                      ' for a person with dietary preferences: ${userPreferences.dietaryPreferences.join(", ")}' ' and intolerances: ${userPreferences.intolerances.join(", ")}' : ''}. If the ingredients are not related to dietary intolerances, generate a recipe only using those ingredients or else say that with ingredients you can\'t generate a recipe due to dietary intolerances.'
+            },
           ],
           'temperature': 0.7, // Adjust as needed
         }),

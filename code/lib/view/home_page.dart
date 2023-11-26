@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:code/Components/alert.dart';
 import 'package:code/controller/auth_service.dart';
 import 'package:code/utils/theme_provider.dart';
@@ -9,7 +7,6 @@ import 'package:code/view/recipe/recipe_generate_page.dart';
 import 'package:code/view/recipe/recipes_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../utils/side_bar.dart';
@@ -27,39 +24,10 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _ingredientController = TextEditingController();
   // Index of the selected page
   int selectedPageIndex = 0;
-  // Initializing the _recipe variable for storing recipes
-  String? _recipe;
   // Variable to tell if we are in the loading state
   bool isLoading = false;
   // Initializing alert variable to handle custom alert pop up
   final Alert _alert = Alert();
-
-  Future<void> _generateRecipe() async {
-    setState(() {
-      isLoading = true;
-      _recipe = null; // Removing the previous response
-    });
-
-    final response = await http.post(
-      Uri.parse(
-          'https://api.openai.com/v1/engines/text-davinci-003/completions'),
-      headers: {
-        'Authorization':
-        'Bearer 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',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'prompt': 'Generate a recipe using ${_ingredientController.text}',
-        'max_tokens': 1000, // Limiting to our requirement
-      }),
-    );
-
-    final data = jsonDecode(response.body);
-    setState(() {
-      _recipe = data['choices'][0]['text'].trim();
-      isLoading = false;
-    });
-  }
 
   final PageController _pageController = PageController();
 
@@ -88,7 +56,7 @@ class _HomePageState extends State<HomePage> {
 
     // Array containing the list of pages
     final List<Widget> pages = [
-      GenerateRecipe(),
+      GenerateRecipe(userId: user?.uid ?? ""),
       const RecipesPage(),
       ProfileManagementPage(userId: user?.uid ?? ""),
       const SettingsPage(),

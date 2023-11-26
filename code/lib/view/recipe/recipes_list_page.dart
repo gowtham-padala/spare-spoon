@@ -14,16 +14,18 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
+  // Initializing the variable for loading screen
   bool isLoading = true;
+  // Initializing the empty recipes
   List<RecipeModel> recipes = [];
+  // Variable for viewing all and saved recipes
   bool showSavedRecipes = false;
   bool showFavouriteRecipes = false;
-
+  // Initiating controllers for authentication and recipe
   final AuthService _auth = AuthService();
-
   final RecipeService _recipeService = RecipeService();
-
-  late String recipeName;
+  // Variable for Expandable floating action button
+  bool isDialOpen = false;
 
   @override
   void initState() {
@@ -36,7 +38,6 @@ class _RecipesPageState extends State<RecipesPage> {
   Future<void> _showSavedRecipes() async {
     recipes =
         await _recipeService.getAllRecipesForAUser(_auth.getCurrentUser()!.uid);
-
     if (mounted) {
       setState(() {
         isLoading = false;
@@ -48,7 +49,6 @@ class _RecipesPageState extends State<RecipesPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDialOpen = false;
     return Scaffold(
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,

@@ -112,6 +112,7 @@ class Alert {
                   isFavorite: isFavorite, // Use the local variable
                   creationDate: DateTime.now(),
                   updateDate: DateTime.now(),
+                  images: [],
                 );
                 if (recipeName.trim() == "") {
                   warningAlert(context, "Please enter a valid recipe name");

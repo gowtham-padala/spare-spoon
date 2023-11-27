@@ -88,7 +88,7 @@ class Sidebar extends StatelessWidget {
                   leading: Icon(Icons.restaurant_menu_outlined,
                       color: Colors.deepPurple.shade300),
                   title: Text(
-                    'Common Recipes',
+                    'Popular',
                     style: TextStyle(
                       color: selectedIndex == 2
                           ? Colors.deepPurple.shade300

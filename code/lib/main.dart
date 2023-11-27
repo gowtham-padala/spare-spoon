@@ -1,11 +1,11 @@
 import 'package:code/utils/theme_provider.dart';
+import 'package:code/view/authentication/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart'; // Import the ThemeProvider class
 
 import 'utils/firebase_options.dart';
-import 'view/authentication/auth_page.dart';
 
 MaterialColor customDeepPurple = const MaterialColor(
   0xFF9575CD, // Replace this with your desired primary color value

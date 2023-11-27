@@ -2,6 +2,7 @@ import 'package:code/components/alert.dart';
 import 'package:code/components/square_tile.dart';
 import 'package:code/components/text_form_field.dart';
 import 'package:code/controller/auth_service.dart';
+import 'package:code/view/authentication/forgot_passwor_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -144,8 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                             // Navigate to forgot password page
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              // TODO: CREATE THE THE FORGOT PASSWORD PAGE
-                              // return const ForgotPasswordPage();
+                              return const ForgotPasswordPage();
                               return Container();
                             }));
                           },

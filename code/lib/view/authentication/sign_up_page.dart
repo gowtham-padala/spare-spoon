@@ -1,4 +1,5 @@
 import 'package:code/Components/alert.dart';
+import 'package:code/components/square_tile.dart';
 import 'package:code/components/text_form_field.dart';
 import 'package:code/controller/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,15 +20,9 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool _isPasswordHidden = true;
-  final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _age = TextEditingController();
-  final TextEditingController _sex = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmPassword = TextEditingController();
-  final TextEditingController _dietaryPreferences = TextEditingController();
-  final TextEditingController _allergies = TextEditingController();
-  final TextEditingController _intolerances = TextEditingController();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final AuthService _auth = AuthService();
@@ -39,8 +34,7 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = true;
       });
-
-      if (_password != _confirmPassword) {
+      if (_password.text.trim() != _confirmPassword.text.trim()) {
         setState(() {
           isLoading = false;
         });
@@ -56,15 +50,14 @@ class _SignUpState extends State<SignUp> {
       if (currentUser != null) {
         final userModel = UserModel(
           id: currentUser.uid,
-          name: _name.text,
+          name: "",
           email: _email.text,
-          sex: _sex.text,
-          age: int.parse(_age.text),
-          dietaryPreferences:
-              _dietaryPreferences.text.split(',').map((e) => e.trim()).toList(),
-          intolerances:
-              _intolerances.text.split(',').map((e) => e.trim()).toList(),
-          allergies: _allergies.text.split(',').map((e) => e.trim()).toList(),
+          sex: "",
+          age: 0,
+          isFirstTimeLogin: true,
+          dietaryPreferences: [],
+          intolerances: [],
+          allergies: [],
         );
 
         // Creating an instance of UserController and calling createUser
@@ -107,12 +100,13 @@ class _SignUpState extends State<SignUp> {
               key: _formKey,
               child: Column(
                 children: [
+                  const SizedBox(height: 80),
                   Icon(
                     Icons.food_bank,
                     size: 100,
                     color: Colors.deepPurple[300],
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 30),
                   // Welcome message
                   Text(
                     'SPARE SPOON',
@@ -122,7 +116,7 @@ class _SignUpState extends State<SignUp> {
                       fontSize: 30,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 10),
                   // Welcome message
                   Text(
                     'Let\'s create an account',
@@ -132,190 +126,64 @@ class _SignUpState extends State<SignUp> {
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        // Email textFormField
-
-                        child: SizedBox(
-                          height: 45,
-                          child: CustomTextField(
-                            controller: _name,
-                            hintText: 'Your name',
-                            obscureText: false,
-                            label: "Name",
-                            iconButton: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.abc,
-                                color: Colors.deepPurple[300],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: SizedBox(
-                          height: 45,
-                          child: CustomTextField(
-                            controller: _email,
-                            hintText: 'hello@company.com',
-                            obscureText: false,
-                            label: "Email",
-                            iconButton: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.email,
-                                color: Colors.deepPurple[300],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 45,
-                          child: CustomTextField(
-                            controller: _age,
-                            hintText: 'Your age',
-                            obscureText: false,
-                            label: "Age",
-                            iconButton: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.calendar_month,
-                                color: Colors.deepPurple[300],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: SizedBox(
-                          height: 45,
-                          child: CustomTextField(
-                            controller: _sex,
-                            hintText: 'Your sex',
-                            obscureText: false,
-                            label: "Sex",
-                            iconButton: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.male,
-                                color: Colors.deepPurple[300],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 45,
-                    child: CustomTextField(
-                      controller: _password,
-                      hintText: 'Your password',
-                      obscureText: _isPasswordHidden,
-                      label: "Password",
-                      iconButton: IconButton(
-                        icon: Icon(
-                          _isPasswordHidden
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.deepPurple.shade300,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordHidden = !_isPasswordHidden;
-                          });
-                        },
+                  const SizedBox(height: 25),
+                  CustomTextField(
+                    controller: _email,
+                    hintText: 'hello@company.com',
+                    obscureText: false,
+                    label: "Email",
+                    iconButton: IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.email,
+                        color: Colors.deepPurple[300],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 45,
-                    child: CustomTextField(
-                      controller: _confirmPassword,
-                      hintText: 'Re-enter your Password',
-                      obscureText: _isPasswordHidden,
-                      label: "Confirm Password",
-                      iconButton: IconButton(
-                        icon: Icon(
-                          _isPasswordHidden
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.deepPurple.shade300,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordHidden = !_isPasswordHidden;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 45,
-                    child: CustomTextField(
-                      controller: _dietaryPreferences,
-                      hintText: 'Your dietary preference',
-                      obscureText: false,
-                      label: "Dietary Preferences",
-                      iconButton: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.food_bank_outlined,
-                          color: Colors.deepPurple[300],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 45,
-                    child: CustomTextField(
-                      controller: _allergies,
-                      hintText: 'Your allergies',
-                      obscureText: false,
-                      label: "Allergies",
-                      iconButton: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.no_food,
-                          color: Colors.deepPurple[300],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 45,
-                    child: CustomTextField(
-                      controller: _intolerances,
-                      hintText: 'Your intolerances',
-                      obscureText: false,
-                      label: "Intolerances",
-                      iconButton: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.warning_amber_outlined,
-                          color: Colors.deepPurple[300],
-                        ),
-                      ),
-                    ),
-                  ),
+// Size box with
                   const SizedBox(height: 20),
+                  CustomTextField(
+                    controller: _password,
+                    hintText: 'Your password',
+                    obscureText: _isPasswordHidden,
+                    label: "Password",
+                    iconButton: IconButton(
+                      icon: Icon(
+                        _isPasswordHidden
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.deepPurple.shade300,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordHidden = !_isPasswordHidden;
+                        });
+                      },
+                    ),
+                  ),
+                  // Size box with
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    controller: _confirmPassword,
+                    hintText: 'Re-enter your Password',
+                    obscureText: _isPasswordHidden,
+                    label: "Confirm Password",
+                    iconButton: IconButton(
+                      icon: Icon(
+                        _isPasswordHidden
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.deepPurple.shade300,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordHidden = !_isPasswordHidden;
+                        });
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
                     height: 45,
@@ -333,7 +201,7 @@ class _SignUpState extends State<SignUp> {
                           : const Text('Sign Up'),
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Row(
@@ -347,7 +215,7 @@ class _SignUpState extends State<SignUp> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Text(
-                            'Or',
+                            'Or Continue with',
                             style: TextStyle(color: Colors.deepPurple[300]),
                           ),
                         ),
@@ -360,31 +228,42 @@ class _SignUpState extends State<SignUp> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 45,
-                    child: OutlinedButton(
-                      onPressed: widget.onPressed,
-                      style: ButtonStyle(
-                        side: MaterialStateProperty.resolveWith<BorderSide>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.disabled)) {
-                              return const BorderSide(
-                                  color: Colors.grey,
-                                  width:
-                                      2.0); // Border color and width when the button is disabled.
-                            }
-                            return BorderSide(
-                                color: Colors.deepPurple.shade300,
-                                width:
-                                    2.0); // Border color and width for the default state.
-                          },
+                  const SizedBox(height: 30),
+
+                  // Google sign in button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Google button
+                      SquareTile(
+                          onTap: () => AuthService().signInWithGoogle(),
+                          imagePath: 'assets/google.png'),
+                    ],
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Already have an account? Login now
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Already have an account?',
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: widget.onPressed,
+                        child: const Text(
+                          'Login now',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      child: const Text('Login'),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
               ),
             ),

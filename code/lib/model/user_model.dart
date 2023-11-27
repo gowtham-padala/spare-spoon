@@ -11,6 +11,7 @@ class UserModel {
   final List<String> dietaryPreferences; // List of dietary preferences
   final List<String> intolerances; // List of intolerances
   final List<String> allergies;
+  final bool isFirstTimeLogin;
 
   // Constructor to initialize UserModel with required attributes
   UserModel({
@@ -22,9 +23,10 @@ class UserModel {
     required this.dietaryPreferences,
     required this.intolerances,
     required this.allergies,
+    required this.isFirstTimeLogin,
   });
 
-  // Convert UserModel to a map for storing in Firestore
+  // Convert UserModel to a map for storing in FireStore
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -34,6 +36,7 @@ class UserModel {
       'dietaryPreferences': dietaryPreferences,
       'intolerances': intolerances,
       'allergies': allergies,
+      'isFirstTimeLogin': isFirstTimeLogin,
     };
   }
 
@@ -48,6 +51,7 @@ class UserModel {
       email: data['email'] ?? '',
       sex: data['sex'] ?? '',
       age: data['age'] ?? 0,
+      isFirstTimeLogin: data['isFirstTimeLogin'] ?? true,
       // Converting lists from dynamic to String
       dietaryPreferences: (data['dietaryPreferences'] as List<dynamic>)
           .map((pref) => pref.toString())

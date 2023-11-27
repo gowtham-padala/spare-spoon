@@ -27,6 +27,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
       email: "",
       sex: "",
       age: 0,
+      isFirstTimeLogin: true,
       dietaryPreferences: [],
       intolerances: [],
       allergies: []);
@@ -93,6 +94,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
           name: nameController.text,
           email: userData.email,
           sex: sexController.text,
+          isFirstTimeLogin: false,
           age: int.parse(ageController.text),
           dietaryPreferences: dietaryPreferencesController.text.split(', '),
           intolerances: intolerancesController.text.split(', '),

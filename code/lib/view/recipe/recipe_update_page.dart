@@ -50,7 +50,7 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
     // Initialize state variables with the values from the provided diary entry.
     _updatedDescription = widget.recipeObj.details;
     _updatedTitle = widget.recipeObj.name;
-    _updatedImages = widget.recipeObj.images!;
+    _updatedImages = widget.recipeObj.images ?? [];
   }
 
   /// Function to pick images from gallery
@@ -60,6 +60,16 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
     if (images.isNotEmpty) {
       setState(() {
         _images = images;
+      });
+    }
+  }
+
+  /// Function to take a picture from the camera
+  Future<void> _takePicture() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      setState(() {
+        _images.add(image);
       });
     }
   }
@@ -290,6 +300,20 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
                 backgroundColor: Colors.deepPurple.shade300,
                 onTap: _pickImageFromGallery,
                 label: 'Add Images',
+                labelBackgroundColor: Colors.deepPurple.shade300,
+                labelStyle: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              SpeedDialChild(
+                child: const Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.deepPurple.shade300,
+                onTap: () async {
+                  await _takePicture();
+                },
+                label: 'Take Picture',
                 labelBackgroundColor: Colors.deepPurple.shade300,
                 labelStyle: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold),

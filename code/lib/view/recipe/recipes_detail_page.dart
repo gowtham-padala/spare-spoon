@@ -1,14 +1,15 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:open_file/open_file.dart';
+
 import 'package:code/model/recipe_model.dart';
 import 'package:code/utils/theme_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class RecipesDetailsPage extends StatelessWidget {
   final String recipeDocID;
@@ -20,28 +21,38 @@ class RecipesDetailsPage extends StatelessWidget {
 
   Future<void> _generateAndSavePDF(RecipeModel recipeObj) async {
     final pdf = pw.Document();
+    // Use the custom font
+    final pw.Font customFont =
+        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
+
+    final logo = await rootBundle.load('assets/spare_spoon_logo.png');
+    final logoByte = logo.buffer.asUint8List();
 
     // Add recipe details to the PDF
     pdf.addPage(
       pw.Page(
         build: (context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Center(
-                child: pw.Text(
-                  recipeObj.name,
-                  style: pw.TextStyle(
-                    fontWeight: pw.FontWeight.bold,
-                    fontSize: 18,
+          return pw.Column(children: [
+            pw.Header(
+              level: 0,
+              child: pw.Row(children: [
+                pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
+                pw.SizedBox(width: 80),
+                pw.Text(recipeObj.name.toUpperCase(),
+                    style: pw.TextStyle(font: customFont, fontSize: 32))
+              ]),
+            ),
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(height: 10), // Add some space
+                  pw.Text(
+                    'Details: ${recipeObj.details}',
+                    style: pw.TextStyle(font: customFont),
                   ),
-                ),
-              ),
-              pw.SizedBox(height: 10), // Add some space
-              pw.Text('Details: ${recipeObj.details}'),
-              // Add other details as needed
-            ],
-          );
+                  // Add other details as needed
+                ]),
+          ]);
         },
       ),
     );
@@ -54,13 +65,22 @@ class RecipesDetailsPage extends StatelessWidget {
       pdf.addPage(
         pw.Page(
           build: (context) {
-            return pw.Center(
-              child: pw.Image(
-                pw.MemoryImage(imageBytes),
-                width: 400,
-                height: 400,
+            return pw.Column(children: [
+              pw.Header(
+                level: 0,
+                child: pw.Row(children: [
+                  pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
+                  pw.SizedBox(width: 80),
+                  pw.Text(recipeObj.name.toUpperCase(),
+                      style: pw.TextStyle(font: customFont, fontSize: 32))
+                ]),
               ),
-            );
+              pw.Image(
+                pw.MemoryImage(imageBytes),
+                width: 100,
+                height: 100,
+              ),
+            ]);
           },
         ),
       );

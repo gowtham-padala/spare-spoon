@@ -37,10 +37,14 @@ class _RecipeCardState extends State<RecipeCard> {
                 ? CircleAvatar(
                     backgroundImage: NetworkImage(widget.recipe.images![0]),
                   )
-                : const CircleAvatar(
+                : CircleAvatar(
+                    backgroundColor: Colors.deepPurple.shade400,
                     // Placeholder image or empty if no images available
-                    backgroundImage: NetworkImage(
-                        "https://firebasestorage.googleapis.com/v0/b/flutterauth-ff1a9.appspot.com/o/food.jpg?alt=media&token=e86eb7cd-4d0f-4c1f-ab1e-d5589b5d89d1"),
+                    child: const Icon(
+                      Icons.food_bank_outlined,
+                      color: Colors.white,
+                      size: 36,
+                    ),
                   ),
         title: Text(
           widget.recipe.name,

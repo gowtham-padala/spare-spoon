@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:code/model/recipe_model.dart';
 import 'package:code/utils/theme_provider.dart';
@@ -24,6 +25,8 @@ class RecipesDetailsPage extends StatefulWidget {
 }
 
 class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
+  bool _isGeneratingPdf = false;
+
   Future<void> _generateAndSavePDF(RecipeModel recipeObj) async {
     final pdf = pw.Document();
     // Use the custom font
@@ -92,13 +95,93 @@ class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
     }
 
     // Save the PDF to a file
-    final directory = await getExternalStorageDirectory();
-    final filePath = '${directory?.path}/recipe_details.pdf';
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/recipe_details.pdf';
 
     final file = File(filePath);
     await file.writeAsBytes(await pdf.save());
 
     OpenFile.open(filePath); // Open the generated PDF file
+  }
+
+    Future<void> _generateAndSaveShoppingListPDF(String shoppingList) async {
+    final pdf = pw.Document();
+    final pw.Font customFont =
+        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
+
+    final logo = await rootBundle.load('assets/spare_spoon_logo.png');
+    final logoByte = logo.buffer.asUint8List();
+
+    pdf.addPage(
+
+      pw.Page(
+        build: (context) {
+          return pw.Column(children: [
+            pw.Header(
+                level: 0,
+                child: pw.Row(children: [
+                  pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
+                  pw.SizedBox(width: 80),
+                  pw.Text(widget.recipeObj.name.toUpperCase(),
+                      style: pw.TextStyle(font: customFont, fontSize: 32))
+                ]),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(shoppingList, style: pw.TextStyle(font: customFont, fontSize: 24)),
+          ]);
+        },
+      ),
+    );
+
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/shopping_list.pdf';
+    final file = File(filePath);
+    await file.writeAsBytes(await pdf.save());
+
+    OpenFile.open(filePath);
+  }
+
+  Future<void> _generateShoppingList(RecipeModel recipeObj) async {
+    setState(() {
+      _isGeneratingPdf = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
+        headers: {
+          'Authorization':
+              'Bearer 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',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4-0613',
+          'messages': [
+            {
+              'role': 'user',
+              'content':
+                  'Generate a shopping list for the following recipe: ${recipeObj.details}'
+            },
+          ],
+          'temperature': 0.7,
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (data != null &&
+          data['choices'] != null &&
+          data['choices'].isNotEmpty &&
+          data['choices'][0]['message'] != null &&
+          data['choices'][0]['message']['content'] != null) {
+        final shoppingList = data['choices'][0]['message']['content'].trim();
+        await _generateAndSaveShoppingListPDF(shoppingList);
+      }
+    } catch (e) {
+      // Handle exception
+    } finally {
+      setState(() {
+        _isGeneratingPdf = false;
+      });
+    }
   }
 
   @override
@@ -208,13 +291,31 @@ class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await _generateAndSavePDF(widget.recipeObj);
-          },
-          backgroundColor: Colors.deepPurple.shade300,
-          tooltip: 'Save as PDF',
-          child: const Icon(Icons.picture_as_pdf),
+                floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () async {
+                await _generateAndSavePDF(widget.recipeObj);
+              },
+              backgroundColor: Colors.deepPurple.shade300,
+              tooltip: 'Save as PDF',
+              child: const Icon(Icons.picture_as_pdf),
+            ),
+            SizedBox(width: 20),
+            FloatingActionButton(
+              onPressed: () async {
+                if (!_isGeneratingPdf) {
+                  _generateShoppingList(widget.recipeObj);
+                }
+              },
+              backgroundColor: Colors.green,
+              tooltip: 'Generate Shopping List',
+              child: _isGeneratingPdf
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : const Icon(Icons.shopping_cart),
+            ),
+          ],
         ),
       ),
     );

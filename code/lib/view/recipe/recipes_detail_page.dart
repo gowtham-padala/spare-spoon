@@ -11,7 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class RecipesDetailsPage extends StatelessWidget {
+class RecipesDetailsPage extends StatefulWidget {
   final String recipeDocID;
   final RecipeModel recipeObj;
 
@@ -19,6 +19,11 @@ class RecipesDetailsPage extends StatelessWidget {
       {required this.recipeDocID, required this.recipeObj, Key? key})
       : super(key: key);
 
+  @override
+  State<RecipesDetailsPage> createState() => _RecipesDetailsPageState();
+}
+
+class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
   Future<void> _generateAndSavePDF(RecipeModel recipeObj) async {
     final pdf = pw.Document();
     // Use the custom font
@@ -38,7 +43,7 @@ class RecipesDetailsPage extends StatelessWidget {
               child: pw.Row(children: [
                 pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
                 pw.SizedBox(width: 80),
-                pw.Text(recipeObj.name.toUpperCase(),
+                pw.Text(widget.recipeObj.name.toUpperCase(),
                     style: pw.TextStyle(font: customFont, fontSize: 32))
               ]),
             ),
@@ -47,7 +52,7 @@ class RecipesDetailsPage extends StatelessWidget {
                 children: [
                   pw.SizedBox(height: 10), // Add some space
                   pw.Text(
-                    'Details: ${recipeObj.details}',
+                    'Details: ${widget.recipeObj.details}',
                     style: pw.TextStyle(font: customFont),
                   ),
                   // Add other details as needed
@@ -58,7 +63,7 @@ class RecipesDetailsPage extends StatelessWidget {
     );
 
     // Add images to the PDF
-    for (var imageUrl in recipeObj.images!) {
+    for (var imageUrl in widget.recipeObj.images!) {
       final response = await http.get(Uri.parse(imageUrl));
       final Uint8List imageBytes = response.bodyBytes;
 
@@ -71,7 +76,7 @@ class RecipesDetailsPage extends StatelessWidget {
                 child: pw.Row(children: [
                   pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
                   pw.SizedBox(width: 80),
-                  pw.Text(recipeObj.name.toUpperCase(),
+                  pw.Text(widget.recipeObj.name.toUpperCase(),
                       style: pw.TextStyle(font: customFont, fontSize: 32))
                 ]),
               ),
@@ -129,103 +134,83 @@ class RecipesDetailsPage extends StatelessWidget {
           ),
         ),
         body: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Card(
-                    color: Colors.deepPurple.shade300,
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(recipeObj.name,
-                              style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'How Do I Make It?',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white),
-                          ),
-                        ],
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Displaying the name of the common recipe with a larger font and bold style
+              Text(
+                widget.recipeObj.name,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                widget.recipeObj.category,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      widget.recipeObj.details,
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                        fontSize: 16,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+              ),
+              const SizedBox(height: 20),
+              if (widget.recipeObj != null &&
+                  widget.recipeObj.images != null &&
+                  widget.recipeObj.images!.isNotEmpty)
                 SizedBox(
-                  width: double.infinity,
-                  height: 400,
-                  child: Card(
-                    color: Colors.deepPurple.shade300,
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                  height: 300,
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
                     ),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          recipeObj.details,
-                          textAlign: TextAlign.justify,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
+                    itemCount: widget.recipeObj.images!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Card(
+                          elevation: 3.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1.0),
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: widget.recipeObj.images![index],
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 20),
-                if (recipeObj.images!.isNotEmpty)
-                  SizedBox(
-                    height: 300,
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                      ),
-                      itemCount: recipeObj.images!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Card(
-                            elevation: 3.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(1.0),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(1.0),
-                              child: FadeInImage.memoryNetwork(
-                                placeholder: kTransparentImage,
-                                image: recipeObj.images![index],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await _generateAndSavePDF(recipeObj);
+            await _generateAndSavePDF(widget.recipeObj);
           },
           backgroundColor: Colors.deepPurple.shade300,
           tooltip: 'Save as PDF',

@@ -5,6 +5,7 @@ class RecipeModel {
   String uid; // User ID associated with the diary entry.
   final String name; // Name of the recipe
   final String details; // Details of the recipe
+  final String category; // Details of the recipe
   bool isFavorite = false; // If recipe is marked favorite or not
   DateTime creationDate; // Date of the diary entry.
   DateTime updateDate; // Date of the diary entry.
@@ -15,6 +16,7 @@ class RecipeModel {
     required this.uid,
     required this.name,
     required this.details,
+    required this.category,
     required this.isFavorite,
     required this.creationDate,
     required this.updateDate,
@@ -26,6 +28,7 @@ class RecipeModel {
       "uid": uid,
       'name': name,
       'details': details,
+      "category": category,
       'isFavorite': isFavorite,
       'creationDate': Timestamp.fromDate(creationDate),
       'updateDate': Timestamp.fromDate(updateDate),
@@ -44,6 +47,7 @@ class RecipeModel {
       uid: data['uid'] ?? "",
       name: data['name'] ?? "",
       details: data['details'] ?? "",
+      category: data['category'] ?? "",
       isFavorite: (data['isFavorite'] ?? false),
       creationDate:
           (data['creationDate'] as Timestamp?)?.toDate() ?? DateTime.now(),

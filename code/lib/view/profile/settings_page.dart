@@ -41,10 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             Text(
               title,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             Transform.scale(
               scale: 0.7,
@@ -113,10 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               Icon(
                 Icons.arrow_forward_ios,
@@ -132,6 +126,12 @@ class _SettingsPageState extends State<SettingsPage> {
       data: ThemeData(
         brightness:
             themeProvider.darkTheme ? Brightness.dark : Brightness.light,
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            color: themeProvider.darkTheme ? Colors.white : Colors.grey[50],
+            // Set other properties as needed
+          ),
+        ),
         // Add other theme properties as needed
       ),
       child: Scaffold(

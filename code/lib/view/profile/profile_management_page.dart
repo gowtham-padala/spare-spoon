@@ -216,6 +216,8 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
           decoration: InputDecoration(
             hintText: '',
             errorStyle: const TextStyle(height: 0),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.deepPurple.shade300)),
             suffixIcon: IconButton(
               onPressed: () {},
               icon: Icon(

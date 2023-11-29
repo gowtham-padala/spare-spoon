@@ -162,9 +162,20 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
                 hintText: "Enter ingredients",
                 filled: true,
                 focusColor: Colors.deepPurple.shade300,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
+
+                border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(
+                    color: Colors.deepPurple
+                        .shade300, // Set the border color when focused
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide(
+                    color: Colors.deepPurple
+                        .shade300, // Set the border color when focused
+                  ),
                 ),
                 // Add a suffix icon for generating a new recipe
                 suffixIcon: IconButton(

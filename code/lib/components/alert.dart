@@ -50,6 +50,7 @@ class Alert {
   Future<SavedRecipeDialogResult?> saveRecipeAlert(
       BuildContext context, String recipeDetails) async {
     String recipeName = '';
+    String category = '';
     bool isFavorite = false;
 
     return showDialog<SavedRecipeDialogResult>(
@@ -73,7 +74,7 @@ class Alert {
           ),
           titlePadding: const EdgeInsets.all(0),
           content: SizedBox(
-            height: 65,
+            height: 125,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -82,6 +83,12 @@ class Alert {
                     recipeName = value;
                   },
                   decoration: const InputDecoration(labelText: 'Recipe Name'),
+                ),
+                TextField(
+                  onChanged: (value) {
+                    category = value;
+                  },
+                  decoration: const InputDecoration(labelText: 'Category Name'),
                 ),
               ],
             ),
@@ -107,9 +114,10 @@ class Alert {
               onPressed: () async {
                 var recipeModel = RecipeModel(
                   uid: _authService!.getCurrentUser()!.uid,
-                  name: recipeName,
+                  name: recipeName, // Using the local variable
                   details: recipeDetails!,
-                  isFavorite: isFavorite, // Use the local variable
+                  category: category, // Using the local variable
+                  isFavorite: isFavorite,
                   creationDate: DateTime.now(),
                   updateDate: DateTime.now(),
                   images: [],

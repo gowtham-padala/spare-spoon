@@ -34,6 +34,7 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
 
   // State variables for updated description, rating, and date of the diary entry.
   late String _updatedDescription;
+  late String _updatedCategory;
   late String _updatedTitle;
   late List<String> _updatedImages;
 
@@ -51,6 +52,7 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
     _updatedDescription = widget.recipeObj.details;
     _updatedTitle = widget.recipeObj.name;
     _updatedImages = widget.recipeObj.images ?? [];
+    _updatedCategory = widget.recipeObj.category;
   }
 
   /// Function to pick images from gallery
@@ -159,6 +161,7 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
           uid: widget.recipeObj.uid,
           name: _updatedTitle,
           details: _updatedDescription,
+          category: _updatedCategory,
           isFavorite: widget.recipeObj.isFavorite,
           creationDate: widget.recipeObj.creationDate,
           // Assuming you want to update the updateDate as well
@@ -218,6 +221,7 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
             uid: widget.recipeObj.uid,
             name: _updatedTitle,
             details: _updatedDescription,
+            category: _updatedCategory,
             isFavorite: widget.recipeObj.isFavorite,
             creationDate: widget.recipeObj.creationDate,
             // Assuming you want to update the updateDate as well
@@ -337,6 +341,34 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
                       },
                       decoration: const InputDecoration(
                         labelText: "Title",
+                        labelStyle: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                        counterStyle: TextStyle(
+                          decoration: null,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                // Text field for entering updated description with character counter.
+                Stack(
+                  alignment: Alignment.bottomLeft,
+                  children: [
+                    TextFormField(
+                      initialValue: widget.recipeObj.category,
+                      onChanged: (value) {
+                        setState(() {
+                          _updatedCategory = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: "Category",
                         labelStyle: TextStyle(
                           fontSize: 20.0,
                         ),

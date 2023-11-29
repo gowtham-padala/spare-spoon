@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:code/model/recipe_model.dart';
 import 'package:code/utils/theme_provider.dart';
@@ -11,13 +12,20 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class RecipesDetailsPage extends StatelessWidget {
+class RecipesDetailsPage extends StatefulWidget {
   final String recipeDocID;
   final RecipeModel recipeObj;
 
   const RecipesDetailsPage(
       {required this.recipeDocID, required this.recipeObj, Key? key})
       : super(key: key);
+
+  @override
+  _RecipesDetailsPageState createState() => _RecipesDetailsPageState();
+}
+
+class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
+  bool _isGeneratingPdf = false;
 
   Future<void> _generateAndSavePDF(RecipeModel recipeObj) async {
     final pdf = pw.Document();
@@ -38,7 +46,7 @@ class RecipesDetailsPage extends StatelessWidget {
               child: pw.Row(children: [
                 pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
                 pw.SizedBox(width: 80),
-                pw.Text(recipeObj.name.toUpperCase(),
+                pw.Text(widget.recipeObj.name.toUpperCase(),
                     style: pw.TextStyle(font: customFont, fontSize: 32))
               ]),
             ),
@@ -47,7 +55,7 @@ class RecipesDetailsPage extends StatelessWidget {
                 children: [
                   pw.SizedBox(height: 10), // Add some space
                   pw.Text(
-                    'Details: ${recipeObj.details}',
+                    'Details: ${widget.recipeObj.details}',
                     style: pw.TextStyle(font: customFont),
                   ),
                   // Add other details as needed
@@ -57,8 +65,7 @@ class RecipesDetailsPage extends StatelessWidget {
       ),
     );
 
-    // Add images to the PDF
-    for (var imageUrl in recipeObj.images!) {
+    for (var imageUrl in widget.recipeObj.images!) {
       final response = await http.get(Uri.parse(imageUrl));
       final Uint8List imageBytes = response.bodyBytes;
 
@@ -71,7 +78,7 @@ class RecipesDetailsPage extends StatelessWidget {
                 child: pw.Row(children: [
                   pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
                   pw.SizedBox(width: 80),
-                  pw.Text(recipeObj.name.toUpperCase(),
+                  pw.Text(widget.recipeObj.name.toUpperCase(),
                       style: pw.TextStyle(font: customFont, fontSize: 32))
                 ]),
               ),
@@ -87,13 +94,92 @@ class RecipesDetailsPage extends StatelessWidget {
     }
 
     // Save the PDF to a file
-    final directory = await getExternalStorageDirectory();
-    final filePath = '${directory?.path}/recipe_details.pdf';
-
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/recipe_details.pdf';
     final file = File(filePath);
     await file.writeAsBytes(await pdf.save());
 
-    OpenFile.open(filePath); // Open the generated PDF file
+    OpenFile.open(filePath);
+  }
+
+  Future<void> _generateAndSaveShoppingListPDF(String shoppingList) async {
+    final pdf = pw.Document();
+    final pw.Font customFont =
+        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
+    
+    final logo = await rootBundle.load('assets/spare_spoon_logo.png');
+    final logoByte = logo.buffer.asUint8List();
+
+    pdf.addPage(
+      
+      pw.Page(
+        build: (context) {
+          return pw.Column(children: [
+            pw.Header(
+                level: 0,
+                child: pw.Row(children: [
+                  pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
+                  pw.SizedBox(width: 80),
+                  pw.Text(widget.recipeObj.name.toUpperCase(),
+                      style: pw.TextStyle(font: customFont, fontSize: 32))
+                ]),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(shoppingList, style: pw.TextStyle(font: customFont, fontSize: 24)),
+          ]);
+        },
+      ),
+    );
+
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/shopping_list.pdf';
+    final file = File(filePath);
+    await file.writeAsBytes(await pdf.save());
+
+    OpenFile.open(filePath);
+  }
+
+  Future<void> _generateShoppingList(RecipeModel recipeObj) async {
+    setState(() {
+      _isGeneratingPdf = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://api.openai.com/v1/chat/completions'),
+        headers: {
+          'Authorization':
+              'Bearer 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',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4-0613',
+          'messages': [
+            {
+              'role': 'user',
+              'content':
+                  'Generate a shopping list for the following recipe: ${recipeObj.details}'
+            },
+          ],
+          'temperature': 0.7,
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (data != null &&
+          data['choices'] != null &&
+          data['choices'].isNotEmpty &&
+          data['choices'][0]['message'] != null &&
+          data['choices'][0]['message']['content'] != null) {
+        final shoppingList = data['choices'][0]['message']['content'].trim();
+        await _generateAndSaveShoppingListPDF(shoppingList);
+      }
+    } catch (e) {
+      // Handle exception
+    } finally {
+      setState(() {
+        _isGeneratingPdf = false;
+      });
+    }
   }
 
   @override
@@ -102,9 +188,7 @@ class RecipesDetailsPage extends StatelessWidget {
 
     return Theme(
       data: ThemeData(
-        brightness:
-            themeProvider.darkTheme ? Brightness.dark : Brightness.light,
-        // Add other theme properties as needed
+        brightness: themeProvider.darkTheme ? Brightness.dark : Brightness.light,
       ),
       child: Scaffold(
         appBar: AppBar(
@@ -112,9 +196,7 @@ class RecipesDetailsPage extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-            ),
+            icon: const Icon(Icons.arrow_back_ios_new),
           ),
           backgroundColor: Colors.deepPurple.shade300,
           title: const Center(
@@ -145,7 +227,7 @@ class RecipesDetailsPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Text(recipeObj.name,
+                          Text(widget.recipeObj.name,
                               style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -177,7 +259,7 @@ class RecipesDetailsPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          recipeObj.details,
+                          widget.recipeObj.details,
                           textAlign: TextAlign.justify,
                           style: const TextStyle(
                             fontSize: 16,
@@ -189,15 +271,14 @@ class RecipesDetailsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                if (recipeObj.images!.isNotEmpty)
+                if (widget.recipeObj.images!.isNotEmpty)
                   SizedBox(
                     height: 300,
                     child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                       ),
-                      itemCount: recipeObj.images!.length,
+                      itemCount: widget.recipeObj.images!.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(2.0),
@@ -210,7 +291,7 @@ class RecipesDetailsPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(1.0),
                               child: FadeInImage.memoryNetwork(
                                 placeholder: kTransparentImage,
-                                image: recipeObj.images![index],
+                                image: widget.recipeObj.images![index],
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -223,13 +304,31 @@ class RecipesDetailsPage extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await _generateAndSavePDF(recipeObj);
-          },
-          backgroundColor: Colors.deepPurple.shade300,
-          tooltip: 'Save as PDF',
-          child: const Icon(Icons.picture_as_pdf),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () async {
+                await _generateAndSavePDF(widget.recipeObj);
+              },
+              backgroundColor: Colors.deepPurple.shade300,
+              tooltip: 'Save as PDF',
+              child: const Icon(Icons.picture_as_pdf),
+            ),
+            SizedBox(width: 20),
+            FloatingActionButton(
+              onPressed: () async {
+                if (!_isGeneratingPdf) {
+                  _generateShoppingList(widget.recipeObj);
+                }
+              },
+              backgroundColor: Colors.green,
+              tooltip: 'Generate Shopping List',
+              child: _isGeneratingPdf
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : const Icon(Icons.shopping_cart),
+            ),
+          ],
         ),
       ),
     );

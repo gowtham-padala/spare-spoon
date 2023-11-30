@@ -38,7 +38,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
   // Form key for validating and managing the form state.
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Controllers for managing text input fields.
+  // Controllers for managing text input fields for name, age, sex, dietary preferences, intolerances and allergies.
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController sexController = TextEditingController();
@@ -48,6 +48,9 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
 
   // Alert component for displaying notifications.
   final Alert _alert = Alert();
+
+  // Initialized the variable to check if the app is in loading state or not
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -138,11 +141,28 @@ class _ProfileManagementScreenState extends State<ProfileManagementPage> {
             backgroundColor: Colors.deepPurple.shade300,
             onPressed: _updateUserData,
             tooltip: "Update Profile",
-            child: const Icon(Icons.update),
+            child: const Icon(
+              Icons.update,
+              color: Colors.white,
+              size: 36,
+            ),
           ),
-          body: SingleChildScrollView(
-            child: _buildProfileContent(),
-          ),
+          body: Stack(children: [
+            SingleChildScrollView(
+              child: _buildProfileContent(),
+            ),
+            Visibility(
+              visible: _isLoading,
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ]),
         ));
   }
 

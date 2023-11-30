@@ -36,6 +36,8 @@ dependencies:
   open_file: ^3.3.2
   smooth_page_indicator: ^1.1.0
   lottie: ^2.7.0
+  flutter_rating_bar: ^4.0.1
+  flutter_tawk: ^0.1.0
 
 dev_dependencies:
   flutter_test:

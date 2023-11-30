@@ -6,6 +6,7 @@ import 'package:code/view/authentication/forgot_passwor_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+/// Widget class for the login page.
 class LoginPage extends StatefulWidget {
   final void Function()? onPressed;
   const LoginPage({super.key, required this.onPressed});

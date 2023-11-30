@@ -1,11 +1,15 @@
 import 'package:code/Components/alert.dart';
 import 'package:code/controller/auth_service.dart';
+import 'package:code/controller/user_service.dart';
+import 'package:code/model/user_model.dart';
 import 'package:code/utils/data.dart';
 import 'package:code/utils/theme_provider.dart';
+import 'package:code/view/chat/customer_support.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Widget class for the settings page.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -135,6 +139,25 @@ class _SettingsPageState extends State<SettingsPage> {
         // Add other theme properties as needed
       ),
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.deepPurple.shade300,
+            onPressed: () async {
+              UserModel? user =
+                  await UserService(_auth.getCurrentUser()!.uid).getUserData();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CustomerSupportChat(
+                    userName: user!.name,
+                    userEmail: user!.email,
+                  ),
+                ),
+              );
+            },
+            child: const Icon(
+              Icons.support_agent,
+              size: 40,
+            )),
         body: Container(
           padding: const EdgeInsets.all(10),
           child: ListView(

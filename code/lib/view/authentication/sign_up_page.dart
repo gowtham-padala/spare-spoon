@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../controller/user_service.dart';
 import '../../model/user_model.dart';
 
+/// Widget class for the login page.
 class SignUp extends StatefulWidget {
   final void Function()? onPressed;
   const SignUp({super.key, required this.onPressed});
@@ -18,14 +19,21 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  // Variable to store the loading state of the page
   bool isLoading = false;
+  // Variable to store the password visibility state
   bool _isPasswordHidden = true;
+  // Text editing controllers for the email field
   final TextEditingController _email = TextEditingController();
+  // Text editing controllers for the password field
   final TextEditingController _password = TextEditingController();
+  // Text editing controllers for the confirm password field
   final TextEditingController _confirmPassword = TextEditingController();
-
+  // Scaffold key to show snack bar
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // Authentication service instance
   final AuthService _auth = AuthService();
+  // Alert class instance
   final Alert _alert = Alert();
 
   createUserWithEmailAndPassword() async {

@@ -1,14 +1,11 @@
-import 'dart:io';
 import 'dart:convert';
 
+import 'package:code/controller/pdf_service.dart';
 import 'package:code/model/recipe_model.dart';
 import 'package:code/utils/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -25,121 +22,12 @@ class RecipesDetailsPage extends StatefulWidget {
 }
 
 class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
+  // Initialized the variable to check if the app is generating pdf or not
   bool _isGeneratingPdf = false;
-
-  Future<void> _generateAndSavePDF(RecipeModel recipeObj) async {
-    final pdf = pw.Document();
-    // Use the custom font
-    final pw.Font customFont =
-        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
-
-    final logo = await rootBundle.load('assets/spare_spoon_logo.png');
-    final logoByte = logo.buffer.asUint8List();
-
-    // Add recipe details to the PDF
-    pdf.addPage(
-      pw.Page(
-        build: (context) {
-          return pw.Column(children: [
-            pw.Header(
-              level: 0,
-              child: pw.Row(children: [
-                pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
-                pw.SizedBox(width: 80),
-                pw.Text(widget.recipeObj.name.toUpperCase(),
-                    style: pw.TextStyle(font: customFont, fontSize: 32))
-              ]),
-            ),
-            pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.SizedBox(height: 10), // Add some space
-                  pw.Text(
-                    'Details: ${widget.recipeObj.details}',
-                    style: pw.TextStyle(font: customFont),
-                  ),
-                  // Add other details as needed
-                ]),
-          ]);
-        },
-      ),
-    );
-
-    // Add images to the PDF
-    for (var imageUrl in widget.recipeObj.images!) {
-      final response = await http.get(Uri.parse(imageUrl));
-      final Uint8List imageBytes = response.bodyBytes;
-
-      pdf.addPage(
-        pw.Page(
-          build: (context) {
-            return pw.Column(children: [
-              pw.Header(
-                level: 0,
-                child: pw.Row(children: [
-                  pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
-                  pw.SizedBox(width: 80),
-                  pw.Text(widget.recipeObj.name.toUpperCase(),
-                      style: pw.TextStyle(font: customFont, fontSize: 32))
-                ]),
-              ),
-              pw.Image(
-                pw.MemoryImage(imageBytes),
-                width: 100,
-                height: 100,
-              ),
-            ]);
-          },
-        ),
-      );
-    }
-
-    // Save the PDF to a file
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/recipe_details.pdf';
-
-    final file = File(filePath);
-    await file.writeAsBytes(await pdf.save());
-
-    OpenFile.open(filePath); // Open the generated PDF file
-  }
-
-    Future<void> _generateAndSaveShoppingListPDF(String shoppingList) async {
-    final pdf = pw.Document();
-    final pw.Font customFont =
-        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
-
-    final logo = await rootBundle.load('assets/spare_spoon_logo.png');
-    final logoByte = logo.buffer.asUint8List();
-
-    pdf.addPage(
-
-      pw.Page(
-        build: (context) {
-          return pw.Column(children: [
-            pw.Header(
-                level: 0,
-                child: pw.Row(children: [
-                  pw.Image(pw.MemoryImage(logoByte), width: 180, height: 100),
-                  pw.SizedBox(width: 80),
-                  pw.Text(widget.recipeObj.name.toUpperCase(),
-                      style: pw.TextStyle(font: customFont, fontSize: 32))
-                ]),
-            ),
-            pw.SizedBox(height: 10),
-            pw.Text(shoppingList, style: pw.TextStyle(font: customFont, fontSize: 24)),
-          ]);
-        },
-      ),
-    );
-
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/shopping_list.pdf';
-    final file = File(filePath);
-    await file.writeAsBytes(await pdf.save());
-
-    OpenFile.open(filePath);
-  }
+  // Variable for Expandable floating action button
+  bool isDialOpen = false;
+  // Initializing variable for downloading pdf services
+  final PdfService _pdfService = PdfService();
 
   Future<void> _generateShoppingList(RecipeModel recipeObj) async {
     setState(() {
@@ -173,7 +61,8 @@ class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
           data['choices'][0]['message'] != null &&
           data['choices'][0]['message']['content'] != null) {
         final shoppingList = data['choices'][0]['message']['content'].trim();
-        await _generateAndSaveShoppingListPDF(shoppingList);
+        await _pdfService.generateAndSaveShoppingListPDF(
+            recipeObj, shoppingList);
       }
     } catch (e) {
       // Handle exception
@@ -216,107 +105,140 @@ class _RecipesDetailsPageState extends State<RecipesDetailsPage> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              // Displaying the name of the common recipe with a larger font and bold style
-              Text(
-                widget.recipeObj.name,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                widget.recipeObj.category,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      widget.recipeObj.details,
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              if (widget.recipeObj != null &&
-                  widget.recipeObj.images != null &&
-                  widget.recipeObj.images!.isNotEmpty)
-                SizedBox(
-                  height: 300,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                    ),
-                    itemCount: widget.recipeObj.images!.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Card(
-                          elevation: 3.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(1.0),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1.0),
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: widget.recipeObj.images![index],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
-        ),
-                floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: const IconThemeData(size: 22.0),
+          backgroundColor: Colors.deepPurple[300],
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          onOpen: () => setState(() => isDialOpen = true),
+          onClose: () => setState(() => isDialOpen = false),
           children: [
-            FloatingActionButton(
-              onPressed: () async {
-                await _generateAndSavePDF(widget.recipeObj);
-              },
+            SpeedDialChild(
+                child: const Icon(
+                  Icons.download,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.deepPurple.shade300,
+                onTap: () async {
+                  setState(() {
+                    _isGeneratingPdf = true;
+                  });
+                  await _pdfService.generateAndSavePDF(widget.recipeObj);
+                  setState(() {
+                    _isGeneratingPdf = false;
+                  });
+                },
+                label: 'Save as PDF',
+                labelBackgroundColor: Colors.deepPurple.shade300,
+                labelStyle: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+            SpeedDialChild(
+              child: const Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
               backgroundColor: Colors.deepPurple.shade300,
-              tooltip: 'Save as PDF',
-              child: const Icon(Icons.picture_as_pdf),
-            ),
-            SizedBox(width: 20),
-            FloatingActionButton(
-              onPressed: () async {
+              onTap: () async {
                 if (!_isGeneratingPdf) {
                   _generateShoppingList(widget.recipeObj);
                 }
               },
-              backgroundColor: Colors.green,
-              tooltip: 'Generate Shopping List',
-              child: _isGeneratingPdf
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : const Icon(Icons.shopping_cart),
+              label: 'Generate Shopping List',
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              labelStyle: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
+        body: Stack(children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Displaying the name of the common recipe with a larger font and bold style
+                Text(
+                  widget.recipeObj.name,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  widget.recipeObj.category,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        widget.recipeObj.details,
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (widget.recipeObj != null &&
+                    widget.recipeObj.images != null &&
+                    widget.recipeObj.images!.isNotEmpty)
+                  SizedBox(
+                    height: 300,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                      ),
+                      itemCount: widget.recipeObj.images!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Card(
+                            elevation: 3.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(1.0),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(1.0),
+                              child: FadeInImage.memoryNetwork(
+                                placeholder: kTransparentImage,
+                                image: widget.recipeObj.images![index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (_isGeneratingPdf)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            ),
+        ]),
       ),
     );
   }

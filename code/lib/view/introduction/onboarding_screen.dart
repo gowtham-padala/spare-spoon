@@ -8,6 +8,7 @@ import 'package:code/view/introduction/intro_page_3.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+// Widget class for the onboarding screen.
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}) : super(key: key);
 
@@ -16,15 +17,21 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  // Page controller for the onboarding screen
   final PageController _controller = PageController();
-
+  // Authentication service
   final AuthService _auth = AuthService();
-
+  // Variable name to store the name of the user
   String name = '';
+  // Variable age to store the age of the user
   int age = 0;
+  // Variable to store gender of the user
   String sex = '';
+  // Variable to store the dietary preferences of the user
   List<String> dietaryPreferences = [];
+  // Variable to store the allergies of the user
   List<String> allergies = [];
+  // Variable to store the intolerances of the user
   List<String> intolerances = [];
 
   @override

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+/// Widget for the second page of the introduction.
 class IntroPage2 extends StatefulWidget {
+  // Variable to store the name of the user.
   final String name;
+  // Variable to store the age of the user.
   final int age;
+  // Variable to store the gender of the user
   final String sex;
   final void Function(String name, int age, String sex) onNext;
 
@@ -20,8 +24,11 @@ class IntroPage2 extends StatefulWidget {
 }
 
 class _IntroPage2State extends State<IntroPage2> {
+  // Text editing controller for the name field.
   final TextEditingController _nameController = TextEditingController();
+  // Initial value for the age field.
   int _selectedAge = 0;
+  // Initial value for gender field.
   String _selectedSex = 'Male';
 
   @override

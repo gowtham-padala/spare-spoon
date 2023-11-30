@@ -10,8 +10,9 @@ class UserModel {
   final int age; // User's age
   final List<String> dietaryPreferences; // List of dietary preferences
   final List<String> intolerances; // List of intolerances
-  final List<String> allergies;
-  final bool isFirstTimeLogin;
+  final List<String> allergies; // List of intolerances
+  final bool
+      isFirstTimeLogin; // Flag to check if user is logging in for the first time
 
   // Constructor to initialize UserModel with required attributes
   UserModel({

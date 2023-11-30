@@ -2,15 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+/// Widget for the third page of the introduction.
 class IntroPage3 extends StatefulWidget {
   final void Function(List<String> dietaryPreferences, List<String> allergies,
       List<String> intolerances) onFinish;
-
+  // Variable to store the dietary preferences of the user.
   final List<String> dietaryPreferences;
+  // Variable to store the allergies of the user.
   final List<String> allergies;
+  // Variable to store the intolerances of the user.
   final List<String> intolerances;
 
-  IntroPage3({
+  const IntroPage3({
     Key? key,
     required this.onFinish,
     required this.dietaryPreferences,
@@ -23,8 +26,11 @@ class IntroPage3 extends StatefulWidget {
 }
 
 class _IntroPage3State extends State<IntroPage3> {
+  // Text editing controller for the dietary preferences field.
   final TextEditingController _dietaryController = TextEditingController();
+  // Text editing controller for the allergies field.
   final TextEditingController _allergiesController = TextEditingController();
+  // Text editing controller for the intolerances field.
   final TextEditingController _intolerancesController = TextEditingController();
 
   @override

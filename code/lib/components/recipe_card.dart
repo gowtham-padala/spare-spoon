@@ -6,12 +6,16 @@ import 'package:code/view/recipe/recipes_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Widget class for the recipe card.
+/// @param recipeDocID The document ID of the recipe.
+/// @param recipe The recipe object.
+/// @param onRecipeUpdated The function to call when the recipe is updated.
 class RecipeCard extends StatefulWidget {
   final String recipeDocID;
   final RecipeModel recipe;
   final Function() onRecipeUpdated;
 
-  RecipeCard({
+  const RecipeCard({
     required this.recipeDocID,
     required this.recipe,
     required this.onRecipeUpdated,

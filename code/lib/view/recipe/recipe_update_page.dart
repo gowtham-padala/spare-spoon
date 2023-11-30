@@ -86,11 +86,6 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
     }
     // Get the current logged in user
     String? currentLoggedInUser = await _auth.getCurrentUser()!.uid;
-    // Check if the user is logged in
-    if (currentLoggedInUser == null) {
-      _alert.errorAlert(context, "Please login first to add images");
-      return []; // or throw an error or handle accordingly
-    }
 
     try {
       // Upload the images to firebase storage

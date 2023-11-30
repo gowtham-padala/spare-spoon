@@ -16,7 +16,6 @@ Future<RecipeDialogResult?> getRecipeNameDialog(BuildContext context) async {
     context: context,
     builder: (context) {
       String recipeName = '';
-      bool isCancelled = false;
       bool isFavorite = false;
 
       return AlertDialog(

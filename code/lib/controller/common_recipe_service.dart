@@ -33,6 +33,7 @@ class CommonRecipeService {
         category: recipe.category,
         creationDate: recipe.creationDate,
         rating: updatedRating,
+        isVeg: recipe.isVeg,
         image: recipe.image,
       );
 

@@ -6,6 +6,7 @@ import 'package:code/model/recipe_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 
 import './common_recipe_details_page.dart';
@@ -89,7 +90,7 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by name or category...',
+                hintText: 'Search by name or category or type...',
                 prefixIcon: Icon(
                   Icons.search,
                   color:
@@ -144,8 +145,86 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
   // Building method to create the UI for the CommonRecipesPage
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: isLoading
+    // Variable for Expandable floating action button
+    bool isDialOpen = false;
+    return Scaffold(
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: const IconThemeData(size: 22.0),
+        backgroundColor: Colors.deepPurple[300],
+        closeManually: false,
+        curve: Curves.bounceIn,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        onOpen: () => setState(() => isDialOpen = true),
+        onClose: () => setState(() => isDialOpen = false),
+        children: [
+          SpeedDialChild(
+              child: const Icon(
+                Icons.food_bank_outlined,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.deepPurple.shade300,
+              onTap: () {
+                if (mounted) {
+                  setState(() {
+                    commonRecipes = originalCommonRecipes;
+                  });
+                }
+              },
+              label: 'Show All Recipes',
+              labelBackgroundColor: Colors.deepPurple.shade300,
+              labelStyle: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+          SpeedDialChild(
+            child: const Icon(
+              Icons.bookmark,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.deepPurple.shade300,
+            onTap: () {
+              if (mounted) {
+                List<CommonRecipeModel> filteredList = [];
+                originalCommonRecipes.forEach((recipe) {
+                  if (recipe.isVeg) {
+                    filteredList.add(recipe);
+                  }
+                });
+
+                commonRecipes = filteredList;
+              }
+            },
+            label: 'Show All Veg Recipes',
+            labelBackgroundColor: Colors.deepPurple.shade300,
+            labelStyle: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          SpeedDialChild(
+            child: const Icon(
+              Icons.bookmark,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.deepPurple.shade300,
+            onTap: () {
+              if (mounted) {
+                List<CommonRecipeModel> filteredList = [];
+                originalCommonRecipes.forEach((recipe) {
+                  if (!recipe.isVeg) {
+                    filteredList.add(recipe);
+                  }
+                });
+
+                commonRecipes = filteredList;
+              }
+            },
+            label: 'Show All Meat Recipes',
+            labelBackgroundColor: Colors.deepPurple.shade300,
+            labelStyle: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      body: isLoading
           ? const Center(
               child:
                   CircularProgressIndicator()) // Show a loading indicator if data is still loading
@@ -223,13 +302,21 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
                                       // Add some spacing between the top of the card and the title
                                       Container(height: 5),
                                       // Add a title widget
-                                      Text(
-                                        recipe.name.trim().isEmpty
-                                            ? "No Name"
-                                            : recipe.name.toUpperCase(),
-                                        style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            recipe.name.trim().isEmpty
+                                                ? "No Name"
+                                                : recipe.name.toUpperCase(),
+                                            style: const TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const Spacer(),
+                                          (recipe.isVeg
+                                              ? VegIcon()
+                                              : NonVegIcon()),
+                                        ],
                                       ),
                                       // Add some spacing between the title and the subtitle
                                       Container(height: 5),
@@ -355,6 +442,34 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
               '', // Passing current user's ID to the details page
         ),
       ),
+    );
+  }
+
+  Widget VegIcon() {
+    return const Stack(
+      alignment: Alignment.center,
+      children: [
+        Icon(
+          Icons.crop_square_sharp,
+          color: Colors.green,
+          size: 36,
+        ),
+        Icon(Icons.circle, color: Colors.green, size: 14),
+      ],
+    );
+  }
+
+  Widget NonVegIcon() {
+    return const Stack(
+      alignment: Alignment.center,
+      children: [
+        Icon(
+          Icons.crop_square_sharp,
+          color: Colors.red,
+          size: 36,
+        ),
+        Icon(Icons.circle, color: Colors.red, size: 14),
+      ],
     );
   }
 }

@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     // Array with name for app bar header
     final List<String> appBarName = [
       "Home",
-      "Recipes",
+      "My Recipes",
       "Popular",
       "Profile Management",
       "Settings",

@@ -86,7 +86,9 @@ class _RecipeCardState extends State<RecipeCard> {
                   Container(height: 5),
                   // Add a title widget
                   Text(
-                    widget.recipe.name.toUpperCase() ?? "No Name",
+                    (widget.recipe.name.isNotEmpty
+                        ? widget.recipe.name.toUpperCase()
+                        : "No Name"),
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                   ),
@@ -94,7 +96,9 @@ class _RecipeCardState extends State<RecipeCard> {
                   Container(height: 5),
                   // Add a subtitle widget
                   Text(
-                    widget.recipe.category ?? "No Category",
+                    (widget.recipe.category.isNotEmpty
+                        ? widget.recipe.category
+                        : "No Category"),
                     style: const TextStyle(
                       fontSize: 20,
                     ),

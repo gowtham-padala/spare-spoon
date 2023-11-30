@@ -271,6 +271,13 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
                 fontSize: 25.0,
               ),
             ),
+            actions: [
+              IconButton(
+                  onPressed: () async {
+                    await _updateRecipeInFirebase(context);
+                  },
+                  icon: const Icon(Icons.save_as_sharp))
+            ],
           ),
           floatingActionButton: SpeedDial(
             animatedIcon: AnimatedIcons.menu_close,

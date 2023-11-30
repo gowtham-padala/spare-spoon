@@ -206,6 +206,17 @@ class _GenerateRecipeState extends State<GenerateRecipe> {
               secondary: const Icon(Icons.shopping_cart),
             ),
             const SizedBox(height: 14.0),
+            Visibility(
+              visible: isLoading,
+              child: Container(
+                padding: const EdgeInsets.only(top: 100.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.deepPurple.shade300,
+                  ),
+                ),
+              ),
+            ),
             if (_recipeDetails != null)
               Column(
                 children: [

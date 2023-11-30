@@ -1,7 +1,10 @@
 import 'package:code/controller/auth_service.dart';
+import 'package:code/controller/common_recipe_service.dart';
 import 'package:code/controller/recipe_service.dart';
+import 'package:code/model/common_recipe_model.dart';
 import 'package:code/model/recipe_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:quickalert/quickalert.dart';
 
 /// A utility class for displaying custom modal dialogs using QuickAlert library.
@@ -195,6 +198,113 @@ class Alert {
                   ),
                 ),
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Alert to perform update to the common recipe rating
+  /// @param {BuildContext} context - current context in the app
+  /// @param {CommonRecipeModel} recipe - common recipe on which update rating action is being performed
+  /// @param {Function} onRecipeUpdate - method to refresh the common recipe page on successful update
+  Future<void> ratingUpdateAlert(BuildContext context, CommonRecipeModel recipe,
+      Function onRecipeUpdate) async {
+    // local variable to store rating for update rating
+    double updatedRating = recipe.rating;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.shade300,
+            ),
+            child: Text(
+              "Rate ${recipe.name}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+          titlePadding: const EdgeInsets.all(0),
+          content: SizedBox(
+            height: 40,
+            child: Center(
+              child: RatingBar.builder(
+                initialRating: recipe.rating.toDouble(),
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 32,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.yellow.shade600,
+                ),
+                onRatingUpdate: (rating) {
+                  updatedRating = rating;
+                },
+              ),
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.shade300,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.shade300,
+                  ),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await CommonRecipeService()
+                          .updateAverageRating(recipe.id!, updatedRating);
+                      onRecipeUpdate();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      "Rate",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );

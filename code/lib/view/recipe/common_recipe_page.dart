@@ -5,6 +5,7 @@ import 'package:code/controller/recipe_service.dart';
 import 'package:code/model/recipe_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 import './common_recipe_details_page.dart';
@@ -264,6 +265,35 @@ class _CommonRecipesPageState extends State<CommonRecipesPage> {
                                             letterSpacing: 1.5),
                                       ),
                                       // Add a spacer to push the buttons to the right side of the card
+                                      const Spacer(),
+                                      InkWell(
+                                        onTap: () async {
+                                          await Alert().ratingUpdateAlert(
+                                              context,
+                                              recipe,
+                                              _loadCommonRecipes);
+                                        },
+                                        child: RatingBar.builder(
+                                          initialRating:
+                                              recipe.rating.toDouble(),
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemSize: 18,
+                                          itemPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 4.0),
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: Colors.yellow.shade600,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            // Empty function, no action needed
+                                          },
+                                        ),
+                                      ),
+
                                       const Spacer(),
                                       GestureDetector(
                                         onTap: () async {

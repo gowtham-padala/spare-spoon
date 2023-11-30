@@ -39,26 +39,14 @@ class _RecipesPageState extends State<RecipesPage> {
   void initState() {
     super.initState();
     // Call the method to show saved recipes initially
-    _showSavedRecipes();
-    _showFavoriteRecipes();
+    _showRecipes();
   }
 
   // Method to fetch and show saved recipes
-  Future<void> _showSavedRecipes() async {
+  Future<void> _showRecipes() async {
     recipes =
         await _recipeService.getAllRecipesForAUser(_auth.getCurrentUser()!.uid);
     originalAllRecipes = recipes;
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-        showSavedRecipes = true;
-        showFavouriteRecipes = false;
-      });
-    }
-  }
-
-  // Method to fetch and show saved recipes
-  Future<void> _showFavoriteRecipes() async {
     favoriteRecipes = await _recipeService
         .getAllFavoriteRecipesForAUser(_auth.getCurrentUser()!.uid);
     originalAllFavoriteRecipe = favoriteRecipes;
@@ -85,11 +73,7 @@ class _RecipesPageState extends State<RecipesPage> {
                 // Handle search logic here
                 setState(() {
                   if (value.toLowerCase().trim().isEmpty) {
-                    if (showFavouriteRecipes) {
-                      _showFavoriteRecipes();
-                    } else if (showSavedRecipes) {
-                      _showSavedRecipes();
-                    }
+                    _showRecipes();
                   } else {
                     List<RecipeModel> filteredList = [];
                     if (showSavedRecipes) {
@@ -136,8 +120,7 @@ class _RecipesPageState extends State<RecipesPage> {
                     _searchController.clear();
                     _searchFocusNode.unfocus();
                     setState(() {
-                      _showFavoriteRecipes();
-                      _showSavedRecipes();
+                      _showRecipes();
                     });
                   },
                 ),
@@ -286,7 +269,7 @@ class _RecipesPageState extends State<RecipesPage> {
                                 RecipeCard(
                                   recipeDocID: recipe.id!,
                                   recipe: recipe,
-                                  onRecipeUpdated: _showSavedRecipes,
+                                  onRecipeUpdated: _showRecipes,
                                 )
                             ],
                           ),
@@ -337,7 +320,7 @@ class _RecipesPageState extends State<RecipesPage> {
                                 RecipeCard(
                                   recipeDocID: recipe.id!,
                                   recipe: recipe,
-                                  onRecipeUpdated: _showSavedRecipes,
+                                  onRecipeUpdated: _showRecipes,
                                 )
                             ],
                           ),

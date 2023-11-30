@@ -49,6 +49,7 @@ class _RecipeCardState extends State<RecipeCard> {
               ),
             ),
           );
+          widget.onRecipeUpdated();
         },
         onLongPress: () {
           Navigator.push(
@@ -60,6 +61,7 @@ class _RecipeCardState extends State<RecipeCard> {
               ),
             ),
           );
+          widget.onRecipeUpdated();
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

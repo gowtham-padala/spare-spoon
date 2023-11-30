@@ -5,11 +5,11 @@ class RecipeModel {
   String uid; // User ID associated with the diary entry.
   final String name; // Name of the recipe
   final String details; // Details of the recipe
-  final String category; // Details of the recipe
+  final String category; // Category of the recipe
   bool isFavorite = false; // If recipe is marked favorite or not
-  DateTime creationDate; // Date of the diary entry.
-  DateTime updateDate; // Date of the diary entry.
-  List<String>? images; // Use a more specific type if possible.
+  DateTime creationDate; // Creation Date of the diary entry.
+  DateTime updateDate; // Update Date of the diary entry.
+  List<String>? images; // Images of the recipe
 
   RecipeModel({
     this.id,
@@ -23,6 +23,7 @@ class RecipeModel {
     this.images,
   });
 
+  // Factory method to create a DiaryModel object from a Map<String, dynamic> object.
   Map<String, dynamic> toMap() {
     return {
       "uid": uid,
@@ -36,6 +37,7 @@ class RecipeModel {
     };
   }
 
+  // Factory method to create a DiaryModel object from a Map<String, dynamic> object.
   factory RecipeModel.fromMap(DocumentSnapshot snapshot) {
     var data = snapshot.data() as Map<String, dynamic>?;
 

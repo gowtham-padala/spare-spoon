@@ -1,3 +1,4 @@
+// This file contains all the data used in the terms of use and privacy policy page.
 Map<String, List<String>> settingsData = {
   "Terms of Use": [
     "Spare Spoon - Terms of Use",

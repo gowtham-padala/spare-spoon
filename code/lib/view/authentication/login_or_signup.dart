@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'login_page.dart';
 
+/// Widget class for the login or sign up page.
 class LoginAndSignUp extends StatefulWidget {
   const LoginAndSignUp({super.key});
 

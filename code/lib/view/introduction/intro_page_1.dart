@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+/// Widget class for the first introduction page 1
 class IntroPage1 extends StatefulWidget {
   const IntroPage1({Key? key}) : super(key: key);
 

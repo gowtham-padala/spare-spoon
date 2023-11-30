@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../model/recipe_model.dart';
 
+/// Widget class for save the recipe item.
 class SavedRecipeItem extends StatelessWidget {
+  // Initialize the recipe object.
   final RecipeModel recipe;
-
+  // Constructor for the recipe item.
   const SavedRecipeItem(this.recipe, {super.key});
 
   @override

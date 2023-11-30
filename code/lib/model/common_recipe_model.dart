@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Model class for the common recipe.
 class CommonRecipeModel {
   final String name; // Name of the common recipe
   final String description; // Description of the common recipe
-  final String category; // Description of the common recipe
-  DateTime creationDate; // Description of the common recipe
-  final String? image;
+  final String category; // Category of the common recipe
+  DateTime creationDate; // Creation of the common recipe
+  final String? image; // Image of the common recipe
 
   CommonRecipeModel({
     required this.name,

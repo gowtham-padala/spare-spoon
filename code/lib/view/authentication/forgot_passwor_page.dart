@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../components/text_form_field.dart';
 
+/// Widget class for the forgot password page.
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 

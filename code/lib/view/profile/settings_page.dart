@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Widget class for the settings page.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 

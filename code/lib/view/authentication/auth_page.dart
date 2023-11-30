@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../home_page.dart';
 
+/// Widget class for the authentication page.
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 

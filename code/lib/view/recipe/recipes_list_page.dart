@@ -261,18 +261,16 @@ class _RecipesPageState extends State<RecipesPage> {
                       const SizedBox(height: 10.0),
                       SizedBox(
                         height: 500,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: ListView(
-                            children: [
-                              for (var recipe in favoriteRecipes)
-                                RecipeCard(
-                                  recipeDocID: recipe.id!,
-                                  recipe: recipe,
-                                  onRecipeUpdated: _showRecipes,
-                                )
-                            ],
-                          ),
+                        child: ListView(
+                          padding: const EdgeInsets.all(10.0),
+                          children: [
+                            for (var recipe in favoriteRecipes)
+                              RecipeCard(
+                                recipeDocID: recipe.id!,
+                                recipe: recipe,
+                                onRecipeUpdated: _showRecipes,
+                              )
+                          ],
                         ),
                       ),
                     ],
@@ -312,18 +310,16 @@ class _RecipesPageState extends State<RecipesPage> {
                       const SizedBox(height: 10.0),
                       SizedBox(
                         height: 500,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: ListView(
-                            children: [
-                              for (var recipe in recipes)
-                                RecipeCard(
-                                  recipeDocID: recipe.id!,
-                                  recipe: recipe,
-                                  onRecipeUpdated: _showRecipes,
-                                )
-                            ],
-                          ),
+                        child: ListView(
+                          padding: const EdgeInsets.all(10.0),
+                          children: [
+                            for (var recipe in recipes)
+                              RecipeCard(
+                                recipeDocID: recipe.id!,
+                                recipe: recipe,
+                                onRecipeUpdated: _showRecipes,
+                              )
+                          ],
                         ),
                       ),
                     ],

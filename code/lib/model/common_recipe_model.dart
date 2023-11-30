@@ -8,7 +8,8 @@ class CommonRecipeModel {
   final String category; // Category of the common recipe
   DateTime creationDate; // Creation of the common recipe
   final String? image; // Image of the common recipe
-  double rating;
+  final bool isVeg; // if recipe is vegetarian
+  double rating; // Rating of the recipe
 
   CommonRecipeModel({
     this.id,
@@ -17,6 +18,7 @@ class CommonRecipeModel {
     required this.category,
     required this.creationDate,
     required this.rating,
+    required this.isVeg,
     this.image,
   });
 
@@ -26,6 +28,7 @@ class CommonRecipeModel {
       'description': description,
       'category': category,
       'rating': rating,
+      'isVeg': isVeg,
       'creationDate': Timestamp.fromDate(creationDate),
       'image': image,
     };
@@ -42,6 +45,7 @@ class CommonRecipeModel {
       id: snapshot.id,
       name: data['name'] ?? "",
       description: data['description'] ?? "",
+      isVeg: data['isVeg'] ?? false,
       category: data['category'] ?? "",
       rating: (data['rating'] ?? 0).toDouble(),
       creationDate:

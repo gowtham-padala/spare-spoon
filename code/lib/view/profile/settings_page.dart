@@ -167,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Row(
                 children: [
-                  Icon(Icons.person, color: Colors.deepPurple),
+                  Icon(Icons.person, color: Colors.deepPurple.shade300),
                   const SizedBox(
                     width: 10,
                   ),

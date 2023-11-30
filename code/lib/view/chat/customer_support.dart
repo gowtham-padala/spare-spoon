@@ -35,7 +35,8 @@ class CustomerSupportChat extends StatelessWidget {
           email: userEmail,
         ),
         placeholder: const Center(
-          child: Text('Loading...'),
+          child:
+              CircularProgressIndicator(), // Use CircularProgressIndicator for loading
         ),
       ),
     );

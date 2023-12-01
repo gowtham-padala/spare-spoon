@@ -19,8 +19,13 @@ class UpdateRecipePage extends StatefulWidget {
   final String recipeDocID;
   final RecipeModel recipeObj;
 
+  final Function() onRecipeUpdated;
+
   const UpdateRecipePage(
-      {required this.recipeDocID, required this.recipeObj, Key? key})
+      {required this.recipeDocID,
+      required this.recipeObj,
+      required this.onRecipeUpdated,
+      Key? key})
       : super(key: key);
 
   @override
@@ -105,6 +110,8 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
         }
       }
 
+      widget.onRecipeUpdated();
+
       // Assuming you want to return the first image URL
       if (imageUrls.isNotEmpty) {
         return imageUrls;
@@ -166,6 +173,8 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
 
         // Call your RecipeService to update the recipe in Firebase
         await _recipe.updateRecipe(widget.recipeDocID, updatedRecipe);
+
+        widget.onRecipeUpdated();
         // Close the loading spinner dialog
         Navigator.of(context).pop();
         _alert.successAlert(context, "Recipe updated successfully");
@@ -225,6 +234,8 @@ class _UpdateRecipePageState extends State<UpdateRecipePage> {
           );
           ;
           await _recipe.updateRecipe(widget.recipeDocID, updatedRecipe);
+
+          widget.onRecipeUpdated();
           // Perform sign-out logic here
           setState(() {
             Navigator.pop(context);

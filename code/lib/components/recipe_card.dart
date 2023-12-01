@@ -58,6 +58,7 @@ class _RecipeCardState extends State<RecipeCard> {
               builder: (context) => UpdateRecipePage(
                 recipeDocID: widget.recipeDocID,
                 recipeObj: widget.recipe,
+                onRecipeUpdated: widget.onRecipeUpdated,
               ),
             ),
           );

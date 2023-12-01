@@ -38,10 +38,14 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLoading = false;
       });
-      if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+      if (e.code.toLowerCase() == 'invalid-credential') {
         if (context.mounted) {
           _alert.errorAlert(
               context, "Invalid login credentials. Please try again.");
+        }
+      } else if (e.code.toLowerCase() == 'invalid-email') {
+        if (context.mounted) {
+          _alert.errorAlert(context, "Please provide a valid email address.");
         }
       } else {
         if (context.mounted) {

@@ -59,7 +59,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     } on FirebaseAuthException catch (err) {
       // Dismiss the loading dialog on error
       Navigator.pop(context);
-      print(err.code);
 
       // Handle specific error cases and display appropriate error messages
       if (err.code == "user-not-found") {

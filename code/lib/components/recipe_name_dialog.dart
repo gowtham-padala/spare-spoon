@@ -53,8 +53,6 @@ Future<RecipeDialogResult?> getRecipeNameDialog(BuildContext context) async {
           TextButton(
             child: const Text('Save'),
             onPressed: () {
-              print("From Save Recipe Name");
-              print(recipeName);
               Navigator.of(context).pop(RecipeDialogResult(
                 recipeName,
                 isFavorite,

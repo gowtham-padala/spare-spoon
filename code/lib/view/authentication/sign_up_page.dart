@@ -2,11 +2,10 @@ import 'package:code/Components/alert.dart';
 import 'package:code/components/square_tile.dart';
 import 'package:code/components/text_form_field.dart';
 import 'package:code/controller/auth_service.dart';
+import 'package:code/controller/user_service.dart';
+import 'package:code/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../controller/user_service.dart';
-import '../../model/user_model.dart';
 
 /// Widget class for the login page.
 class SignUp extends StatefulWidget {
@@ -23,6 +22,7 @@ class _SignUpState extends State<SignUp> {
   bool isLoading = false;
   // Variable to store the password visibility state
   bool _isPasswordHidden = true;
+  bool _isConfirmPasswordHidden = true;
   // Text editing controllers for the email field
   final TextEditingController _email = TextEditingController();
   // Text editing controllers for the password field
@@ -37,61 +37,67 @@ class _SignUpState extends State<SignUp> {
   final Alert _alert = Alert();
 
   createUserWithEmailAndPassword() async {
-    try {
-      if (!mounted) return;
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
+    if (_password.text.trim() != _confirmPassword.text.trim()) {
       setState(() {
-        isLoading = true;
+        isLoading = false;
       });
-      if (_password.text.trim() != _confirmPassword.text.trim()) {
+      _alert.warningAlert(
+          context, "Password do not match, please provide matching password");
+    } else {
+      try {
+        await _auth.registerWithEmailAndPassword(
+          _email.text,
+          _password.text,
+        );
+
+        final currentUser = _auth.getCurrentUser();
+        if (currentUser != null) {
+          final userModel = UserModel(
+            id: currentUser.uid,
+            name: "",
+            email: _email.text,
+            sex: "",
+            age: 0,
+            isFirstTimeLogin: true,
+            dietaryPreferences: [],
+            intolerances: [],
+            allergies: [],
+          );
+
+          // Creating an instance of UserController and calling createUser
+          final userController = UserService(currentUser.uid);
+          await userController.createUser(userModel);
+        }
+        if (!mounted) return;
         setState(() {
           isLoading = false;
         });
-        _alert.warningAlert(
-            context, "Password do not match, please provide matching password");
+      } on FirebaseAuthException catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        if (e.code == 'weak-password') {
+          _alert.errorAlert(context, "The password provided is too weak");
+        } else if (e.code == 'email-already-in-use') {
+          _alert.errorAlert(
+              context, "The account already exists for that email");
+        } else if (e.code.toLowerCase() == 'invalid-email') {
+          if (context.mounted) {
+            _alert.errorAlert(context, "Please provide a valid email address.");
+          }
+        } else {
+          _alert.errorAlert(
+              context, "Something went wrong, please try again later");
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
       }
-      await _auth.registerWithEmailAndPassword(
-        _email.text,
-        _password.text,
-      );
-
-      final currentUser = _auth.getCurrentUser();
-      if (currentUser != null) {
-        final userModel = UserModel(
-          id: currentUser.uid,
-          name: "",
-          email: _email.text,
-          sex: "",
-          age: 0,
-          isFirstTimeLogin: true,
-          dietaryPreferences: [],
-          intolerances: [],
-          allergies: [],
-        );
-
-        // Creating an instance of UserController and calling createUser
-        final userController = UserService(currentUser.uid);
-        await userController.createUser(userModel);
-      }
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      if (e.code == 'weak-password') {
-        _alert.errorAlert(context, "The password provided is too weak");
-      } else if (e.code == 'email-already-in-use') {
-        _alert.errorAlert(context, "The account already exists for that email");
-      } else {
-        _alert.errorAlert(
-            context, "Something went wrong, please try again later");
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
@@ -148,7 +154,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                   ),
-// Size box with
+                  // Size box with
                   const SizedBox(height: 20),
                   CustomTextField(
                     controller: _password,
@@ -174,18 +180,18 @@ class _SignUpState extends State<SignUp> {
                   CustomTextField(
                     controller: _confirmPassword,
                     hintText: 'Re-enter your Password',
-                    obscureText: _isPasswordHidden,
+                    obscureText: _isConfirmPasswordHidden,
                     label: "Confirm Password",
                     iconButton: IconButton(
                       icon: Icon(
-                        _isPasswordHidden
+                        _isConfirmPasswordHidden
                             ? Icons.visibility
                             : Icons.visibility_off,
                         color: Colors.deepPurple.shade300,
                       ),
                       onPressed: () {
                         setState(() {
-                          _isPasswordHidden = !_isPasswordHidden;
+                          _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
                         });
                       },
                     ),

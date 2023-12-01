@@ -1,6 +1,7 @@
 import 'package:code/controller/auth_service.dart';
 import 'package:code/controller/common_recipe_service.dart';
 import 'package:code/controller/recipe_service.dart';
+import 'package:code/controller/user_service.dart';
 import 'package:code/model/common_recipe_model.dart';
 import 'package:code/model/recipe_model.dart';
 import 'package:flutter/material.dart';
@@ -440,9 +441,17 @@ class Alert {
       titleColor: Colors.black,
       textColor: Colors.black,
       onConfirmBtnTap: () async {
-        await AuthService().deleteAccount();
-        if (context.mounted) {
-          Navigator.of(context).pop();
+        try {
+          String userID = _authService.getCurrentUser()!.uid;
+          await UserService(userID).deleteUserData();
+          // await _authService.signOut();
+          await _authService.deleteAccount();
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+        } catch (error) {
+          print('Error deleting account: $error');
+          // Handle the error, show a message, or take appropriate action.
         }
       },
     );

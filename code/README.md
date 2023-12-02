@@ -31,6 +31,11 @@ View/
 main.dart
 ```
 
+## Video Demo
+
+1. [Full Video Demonstration](https://youtu.be/lKLkdpRI8Xg)
+2. [Short Add Style Video](https://youtu.be/11lew5w7Lvs)
+
 ## Contributing
 
 We welcome contributions to enhance Spare Spoon! Please follow these guidelines:
@@ -48,6 +53,3 @@ For more details, check our [Contributing Guidelines](CONTRIBUTING.md).
 ## License
 
 This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code. We appreciate your contributions and hope Spare Spoon brings joy to your culinary adventures! 🍲🚀
-
-
-

@@ -16,6 +16,7 @@ Spare Spoon transforms the way home cooks approach their meals by offering recip
 - [Technical Stack](#technical-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+- [Video Demo](#video-demo)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -73,3 +74,23 @@ View/
   Recipes/
   home_page.dart
 main.dart
+```
+
+## Video Demo
+
+1. [Full Video Demonstration](https://youtu.be/lKLkdpRI8Xg)
+2. [Short Add Style Video](https://youtu.be/11lew5w7Lvs)
+
+## Contributing
+
+We welcome contributions to enhance Spare Spoon! Please follow these guidelines:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix: `git checkout -b feature/your-feature`.
+3. Commit your changes: `git commit -m 'Add your feature'`.
+4. Push to the branch: `git push origin feature/your-feature`.
+5. Open a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code. We appreciate your contributions and hope Spare Spoon brings joy to your culinary adventures! 🍲🚀
